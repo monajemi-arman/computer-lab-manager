@@ -29,6 +29,14 @@ Managing our university's computer lab involves:
 - **PostgreSQL with Prisma**: Activity logging and audit trails
 - **Dual Database Strategy**: Using each database for its strengths - MongoDB for flexible user data, PostgreSQL for structured activity records
 
+## 🚧 Current Status
+**Active Development** - Building core synchronization and monitoring features
+
+## 📖 Usage
+
+* **Clone** this repository
+* Change **MongoDB password** in `.env` in project baseMongoDB password
+
 ## 🔮 Future Roadmap
 
 ### Sparkling Integration
@@ -36,9 +44,6 @@ Integration with our existing [Sparkling](https://github.com/monajemi-arman/spar
 - Automated GPU-enabled Spark cluster deployment
 - Distributed AI training environment management
 - GPU resource allocation and monitoring for machine learning workloads
-
-## 🚧 Current Status
-**Active Development** - Building core synchronization and monitoring features
 
 ## 💡 Learning Aspect
 

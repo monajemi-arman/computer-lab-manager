@@ -13,3 +13,7 @@ export const userToToken = (user: IUser) => {
     { expiresIn: 3600 }
   )
 }
+
+export const verifyToken = (token: string) => {
+  return !!jwt.verify(token, generateJwtPrivateKey.key);
+}

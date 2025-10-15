@@ -1,7 +1,7 @@
 import { stackMiddlewares } from "./middlewares/stack-middlewares";
-import { withUser } from "./middlewares/with-auth";
+import { validateToken } from "./middlewares/validate-token";
 
-const middlewares = [withUser];
+const middlewares = [validateToken];
 export default stackMiddlewares(middlewares);
 
 export const config = {

@@ -1,25 +1,19 @@
 import crypto from 'crypto';
 
 class GenerateJwtPrivateKey {
-    static #instance: GenerateJwtPrivateKey;
-    key!: string;
+    private static instance: GenerateJwtPrivateKey;
+    public readonly key: string;
 
     private constructor() {
-        if (!GenerateJwtPrivateKey.#instance) {
-            GenerateJwtPrivateKey.#instance = new GenerateJwtPrivateKey();
-            GenerateJwtPrivateKey.#instance.key = this.makeKey();
+        this.key = crypto.randomBytes(32).toString('hex');
+    }
+
+    public static getInstance(): GenerateJwtPrivateKey {
+        if (!GenerateJwtPrivateKey.instance) {
+            GenerateJwtPrivateKey.instance = new GenerateJwtPrivateKey();
         }
-
-        return GenerateJwtPrivateKey.#instance;
-    }
-
-    public static get instance(): GenerateJwtPrivateKey {
-        return GenerateJwtPrivateKey.#instance;
-    }
-
-    private makeKey() {
-        return crypto.randomBytes(32).toString('hex');
+        return GenerateJwtPrivateKey.instance;
     }
 }
 
-export const generateJwtPrivateKey = GenerateJwtPrivateKey.instance;
+export const generateJwtPrivateKey = GenerateJwtPrivateKey.getInstance();

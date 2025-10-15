@@ -1,3 +1,4 @@
+import { HydratedDocument } from "mongoose";
 import { Computer } from "./computer";
 
 export interface LoginCredentials {
@@ -5,12 +6,12 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface User {
-  id: string;
+export interface IUser {
+  id?: string;
   username: string;
   password: string;
   role: 'admin' | 'user';
-  computers: Computer[];
+  computers?: Computer[];
 }
 
-export interface IUserDocument extends Document, User {}
+export type IUserDocument = HydratedDocument<IUser>;

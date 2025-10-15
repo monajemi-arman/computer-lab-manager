@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+var env = process.env.NODE_ENV || 'development';
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
@@ -15,12 +17,19 @@ declare global {
     var mongoose: CachedMongoose;
 }
 
-let cached: CachedMongoose = global.mongoose = global.mongoose || { conn: null, promise: null };
+const cached: CachedMongoose = global.mongoose = global.mongoose || { conn: null, promise: null };
 
 export async function connectToDatabase() {
     if (!cached.conn) {
         if (!cached.promise) {
-            cached.promise = mongoose.connect(MONGODB_URI!);
+            if (env == 'development')
+                console.log("Connecting to MongoDB URI: " + MONGODB_URI);
+            cached.promise = mongoose.connect(MONGODB_URI!, {
+                bufferCommands: false,
+                maxPoolSize: 10,
+                serverSelectionTimeoutMS: 5000,
+                socketTimeoutMS: 45000,
+            });
         }
         cached.conn = await cached.promise;
     }

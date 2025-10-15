@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import { IUserRepository } from "./userRepository";
-import { IUserDocument, User } from "@/types/user";
+import { IUserDocument, IUser } from "@/types/user";
 
 export class MongooseUserRepository implements IUserRepository {
     private model: Model<IUserDocument>;
@@ -21,12 +21,12 @@ export class MongooseUserRepository implements IUserRepository {
         return await this.model.find().exec();
     }
 
-    async create(user: User): Promise<IUserDocument> {
+    async create(user: IUser): Promise<IUserDocument> {
         const newUser = new this.model(user);
         return await newUser.save();
     }
 
-    async update(id: string, user: User): Promise<IUserDocument | null> {
+    async update(id: string, user: IUser): Promise<IUserDocument | null> {
         return await this.model.findByIdAndUpdate(id, user, { new: true }).exec();
     }
 

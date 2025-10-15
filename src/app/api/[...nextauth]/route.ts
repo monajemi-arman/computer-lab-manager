@@ -1,3 +1,4 @@
+import { LoginCredentials } from "@/types/user";
 import NextAuth from "next-auth";
 import CredentialsProviders from "next-auth/providers/credentials";
 
@@ -9,7 +10,7 @@ const authOptions = {
       username: { label: "Username", type: "text" },
       password: {  label: "Password", type: "password" }
     },
-    async authorize(credentials: LoginCredentials | undefined, req: any) {
+    async authorize(credentials: LoginCredentials | undefined) {
       if (!credentials) {
         return null
       }

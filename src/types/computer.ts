@@ -1,11 +1,12 @@
-import { User } from "./user";
+import { HydratedDocument } from "mongoose";
+import { IUser } from "./user";
 
 export interface Computer {
   id: string;
   address: string;
   hostname: string;
   status: 'active' | 'inactive';
-  users: User[];
+  users: IUser[];
 }
 
-export interface IComputerDocument extends Document, Computer {}
+export type IComputerDocument = HydratedDocument<Computer>;

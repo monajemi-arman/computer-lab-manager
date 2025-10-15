@@ -1,3 +1,4 @@
+import { IComputerDocument } from "@/types/computer";
 import mongoose, { Schema } from "mongoose";
 
 const computerSchema = new Schema({
@@ -7,4 +8,4 @@ const computerSchema = new Schema({
   users: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
-export const Computer = mongoose.model('Computer', computerSchema);
+export const ComputerModel = mongoose.model<IComputerDocument>('Computer', computerSchema);

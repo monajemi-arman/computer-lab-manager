@@ -1,15 +1,16 @@
 import { container } from "@/lib/container";
 import { IUserRepository } from "@/repositories/userRepository";
-import { comparePassword, responseJson } from "@/lib/utils";
+import { responseJson } from "@/lib/utils";
 import { LoginCredentials } from "@/types/user";
 import { loginCredentialsSchema } from "@/lib/validation/userSchema";
 import { connectToDatabase } from "@/lib/mongodb";
+import { comparePassword } from "@/lib/password/hash";
 
 export const POST = async (req: Request) => {
     await connectToDatabase();
 
     if (req.method === "POST") {
-        const loginCredentials: LoginCredentials = loginCredentialsSchema.parse(req.body);
+        const loginCredentials: LoginCredentials = loginCredentialsSchema.parse(await req.json());
 
         if (!loginCredentials.username || !loginCredentials.password) {
             return responseJson("Missing username or password!", 401);
@@ -21,6 +22,8 @@ export const POST = async (req: Request) => {
         if (!user || !await comparePassword(loginCredentials.password, user.password)) {
             return responseJson("Invalid username or password", 401);
         }
+
+        user.password = '';
 
         return responseJson({ user });
     }

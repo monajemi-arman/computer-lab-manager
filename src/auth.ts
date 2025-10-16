@@ -1,8 +1,9 @@
+import { generateJwtPrivateKey } from "@/lib/token/generate-key";
 import { LoginCredentials } from "@/types/user";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProviders from "next-auth/providers/credentials";
 
-const authOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProviders({
     name: 'Credentials',
@@ -26,10 +27,12 @@ const authOptions = {
       }
       return null
     }
-  })
+  }),
   ],
+  secret: generateJwtPrivateKey.key,
+  pages: {
+    signIn: "/login",
+  },
 };
 
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);

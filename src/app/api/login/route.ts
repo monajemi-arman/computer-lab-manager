@@ -1,8 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { container } from "@/lib/container";
 import { IUserRepository } from "@/repositories/userRepository";
 import { comparePassword, responseJson } from "@/lib/utils";
-import { userToToken } from "@/lib/token/functions";
 import { LoginCredentials } from "@/types/user";
 import { loginCredentialsSchema } from "@/lib/validation/userSchema";
 import { connectToDatabase } from "@/lib/mongodb";
@@ -24,9 +22,7 @@ export const POST = async (req: Request) => {
             return responseJson("Invalid username or password", 401);
         }
 
-        const token = userToToken(user);
-
-        return responseJson("ok");
+        return responseJson({ user });
     }
 
     return responseJson("Method not allowed!", 405);

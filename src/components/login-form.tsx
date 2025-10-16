@@ -14,6 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { signIn } from "@/auth"
 
 export function LoginForm({
   className,
@@ -26,7 +27,16 @@ export function LoginForm({
           <CardTitle>Login to your account</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
+          <form
+            action={async (formData) => {
+              "use server"
+              try {
+                await signIn("credentials", formData)
+              } catch (error) {
+                console.error(error);
+              }
+            }}
+          >
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>

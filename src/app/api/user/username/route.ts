@@ -1,5 +1,6 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
+import { passwordToHash } from "@/lib/password/hash";
 import { responseJson } from "@/lib/utils";
 import { updateUserSchema } from "@/lib/validation/userSchema";
 import { IUserRepository } from "@/repositories/userRepository";
@@ -16,7 +17,9 @@ export const GET = async (req: NextRequest) => {
     if (!username)
         return responseJson("no username given", 404);
 
-    const user = userRepository ? await userRepository.findByUsername(username) : null;;
+    const user = userRepository ? await userRepository.findByUsername(username) : null;
+    if (user)
+        user.password = '';
 
     if (!user)
         return responseJson("user not found", 404);
@@ -34,6 +37,10 @@ export const PUT = async (req: NextRequest) => {
         return responseJson("no username given", 404);
 
     const user = updateUserSchema.parse(req.body);
+
+    if (user.password && user.password.length > 0) {
+        user.password = await passwordToHash(user.password);
+    }
 
     const foundUser = userRepository ? await userRepository.findByUsername(username) : null;;
 

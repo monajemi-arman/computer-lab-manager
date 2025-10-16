@@ -1,5 +1,6 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
+import { passwordToHash } from "@/lib/password/hash";
 import { responseJson } from "@/lib/utils";
 import { createUserSchema } from "@/lib/validation/userSchema";
 import { IUserRepository } from "@/repositories/userRepository";
@@ -11,7 +12,13 @@ export const GET = async (req: Request) => {
 
     try {
         const users = userRepository ? await userRepository.findAll() : null;
-        return responseJson(users);
+        if (users) {
+            const sanitizedUsers = users.map((user) => { user.password = ''; return user });
+            return responseJson(users);
+        }
+        
+        return responseJson({});
+
     } catch (err) {
         return new Response(JSON.stringify({ error: "Failed to fetch users" }), {
             status: 500,
@@ -26,6 +33,7 @@ export const POST = async (req: Request) => {
     try {
         const body = await req.json();
         const user = createUserSchema.parse(body);
+        user.password = await passwordToHash(user.password);
 
         const foundUser = userRepository ? await userRepository.findByUsername(user.username) : null;
 
@@ -37,7 +45,8 @@ export const POST = async (req: Request) => {
         }
 
         const created = await userRepository.create(user);
-        return responseJson('ok', 201);
+        created.password = '';
+        return responseJson(created, 201);
 
     } catch (err: any) {    // eslint-disable-line
         const message = err?.message || "Invalid request";

@@ -7,11 +7,6 @@ import { NextRequest } from "next/server";
 
 const userRepository = container.resolve<IUserRepository>("IUserRepository");
 
-const getUserByUsername = async (username: string) => {
-    const user = userRepository ? await userRepository.findById(username) : null;
-    return user;
-}
-
 export const GET = async (req: NextRequest) => {
     await connectToDatabase();
 
@@ -21,7 +16,7 @@ export const GET = async (req: NextRequest) => {
     if (!username)
         return responseJson("no username given", 404);
 
-    const user = getUserByUsername(username);
+    const user = userRepository ? await userRepository.findByUsername(username) : null;;
 
     if (!user)
         return responseJson("user not found", 404);
@@ -40,7 +35,7 @@ export const PUT = async (req: NextRequest) => {
 
     const user = updateUserSchema.parse(req.body);
 
-    const foundUser = await getUserByUsername(username);
+    const foundUser = userRepository ? await userRepository.findByUsername(username) : null;;
 
     if (!foundUser || !foundUser.id)
         return responseJson('not found', 404);
@@ -58,7 +53,7 @@ export const DELETE = async (req: NextRequest) => {
     if (!username)
         return responseJson("no username given", 404);
 
-    const foundUser = await getUserByUsername(username);
+    const foundUser = userRepository ? await userRepository.findByUsername(username) : null;;
 
     if (!foundUser || !foundUser.id)
         return responseJson('not found', 404);

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { signIn } from "@/auth"
+import { isRedirectError } from "next/dist/client/components/redirect-error"
 
 export function LoginForm({
   className,
@@ -33,7 +34,11 @@ export function LoginForm({
               try {
                 await signIn("credentials", formData)
               } catch (error) {
-                console.error(error);
+                console.log(error);
+                // Next line is more crucial than you think!
+                if (isRedirectError(error)) {
+                  throw error;
+                }
               }
             }}
           >
@@ -42,6 +47,7 @@ export function LoginForm({
                 <FieldLabel htmlFor="username">Username</FieldLabel>
                 <Input
                   id="username"
+                  name="username"
                   type="text"
                   required
                 />
@@ -50,7 +56,7 @@ export function LoginForm({
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>

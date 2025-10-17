@@ -5,10 +5,11 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Chrome",
+			"type": "firefox",
 			"request": "launch",
-			"type": "chrome",
-			"url": "http://localhost:3000",
+			"reAttach": true,
+			"name": "Firefox",
+			"url": "http://localhost:3000/dashboard",
 			"webRoot": "${workspaceFolder}/src/app"
 		},
 		{

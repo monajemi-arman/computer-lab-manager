@@ -2,6 +2,7 @@ import { generateJwtPrivateKey } from "@/lib/token/generate-key";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { restrictedPaths } from "./lib/config/routes";
+import { IUser } from "./types/user";
 
 const authOptions: NextAuthConfig = {
   providers: [
@@ -12,8 +13,10 @@ const authOptions: NextAuthConfig = {
         username: { label: "username", type: "text" },
         password: { label: "password", type: "password" }
       },
-      async authorize(credentials: any) {
+      // Extra complicated code in next line
+      async authorize(credentials: Partial<Record<"username" | "password", unknown>>) {
         if (!credentials || !credentials.username || !credentials.password ||
+          typeof credentials.username !== 'string' || typeof credentials.password !== 'string' ||
           credentials.username.length <= 0 || credentials.password.length <= 0
         ) {
           return null;
@@ -46,16 +49,22 @@ const authOptions: NextAuthConfig = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-      }
-      return token
-    },
-    async session({ session, token }) {
-      session.user.id = token.id as string
-      return session
-    },
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id;
+      token.username = user.username;
+      token.role = user.role;
+    }
+    return token;
+  },
+  async session({ session, token }) {
+    if (session.user) {
+      session.user.id = token.id;
+      session.user.username = token.username;
+      session.user.role = token.role;
+    }
+    return session;
+  },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnRestrictedPath = restrictedPaths.some((path: string) =>
@@ -68,7 +77,7 @@ const authOptions: NextAuthConfig = {
       else if (isLoggedIn) {
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
-      return true;  // All pages authorized except dashboard! BUG?
+      return true;
     }
   },
 };

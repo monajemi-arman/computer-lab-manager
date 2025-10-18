@@ -25,7 +25,7 @@ export const POST = async (req: Request) => {
 
         user.password = '';
 
-        return responseJson({ user });
+        return responseJson(user);
     }
 
     return responseJson("Method not allowed!", 405);

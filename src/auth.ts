@@ -2,7 +2,6 @@ import { generateJwtPrivateKey } from "@/lib/token/generate-key";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { restrictedPaths } from "./lib/config/routes";
-import { IUser } from "./types/user";
 
 const authOptions: NextAuthConfig = {
   providers: [

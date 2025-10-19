@@ -1,23 +1,21 @@
 "use client"
 import * as React from "react"
 import {
-  AudioWaveform,
-  Command,
   GalleryVerticalEnd,
   Users,
   ServerCog,
-  RefreshCw,
-  Package,
   Download,
   Activity,
   Monitor,
   Smartphone,
   Terminal,
   User,
+  CloudUpload,
+  Upload,
+  ComputerIcon
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
@@ -27,7 +25,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { title } from "process"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   isAdmin?: boolean
@@ -66,6 +63,23 @@ const data = {
       ],
     },
     {
+      title: "File Server",
+      url: "#file-server",
+      icon: CloudUpload,
+      items: [
+        {
+          title: "Upload",
+          url: '#file-server-upload',
+          icon: Upload
+        },
+        {
+          title: "Download",
+          url: '#file-server-download',
+          icon: Download
+        }
+      ]
+    },
+    {
       title: "Profile",
       url: "#profile",
       icon: User,
@@ -80,10 +94,22 @@ const data = {
   // Admin-only menu items
   adminNavMain: [
     {
-      title: "User Management",
-      url: "#admin-users",
+      title: "Access Management",
+      url: "#admin-access",
       icon: Users,
       isAdminOnly: true,
+      items: [
+        {
+          title: 'Users',
+          url: '#admin-users',
+          icon: Users,
+        },
+        {
+          title: 'Computers',
+          url: '#admin-computers',
+          icon: ComputerIcon
+        }
+      ]
     },
     {
       title: "Monitoring",
@@ -93,6 +119,10 @@ const data = {
         {
           title: "Systems Load & Uptime",
           url: "#admin-monitoring-systems",
+        },
+        {
+          title: "Storage Statistics",
+          url: "#admin-storage-statistics",
         }
       ]
     },
@@ -103,20 +133,15 @@ const data = {
       isAdminOnly: true,
       items: [
         {
-          title: "Sync Users",
-          url: "#admin-sync-users",
-          icon: RefreshCw,
-        },
-        {
-          title: "Update Packages",
-          url: "#admin-update-packages",
-          icon: Package,
-        },
-        {
-          title: "Install Software",
-          url: "#admin-install-software",
+          title: "Software Management",
+          url: "#admin-software-management",
           icon: Download,
         },
+        {
+          title: "File Server",
+          url: "#admin-file-server",
+          icon: Download,
+        }
       ],
     },
   ],

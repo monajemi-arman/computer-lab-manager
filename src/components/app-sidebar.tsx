@@ -12,7 +12,6 @@ import {
   User,
   CloudUpload,
   Upload,
-  ComputerIcon
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -34,7 +33,6 @@ const data = {
   user: {
     name: "Admin",
     email: "info@localhost",
-    avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
@@ -107,7 +105,7 @@ const data = {
         {
           title: 'Computers',
           url: '#admin-computers',
-          icon: ComputerIcon
+          icon: Monitor
         }
       ]
     },

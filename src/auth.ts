@@ -12,7 +12,6 @@ const authOptions: NextAuthConfig = {
         username: { label: "username", type: "text" },
         password: { label: "password", type: "password" }
       },
-      // Extra complicated code in next line
       async authorize(credentials: Partial<Record<"username" | "password", unknown>>) {
         if (!credentials || !credentials.username || !credentials.password ||
           typeof credentials.username !== 'string' || typeof credentials.password !== 'string' ||
@@ -48,35 +47,34 @@ const authOptions: NextAuthConfig = {
     strategy: "jwt",
   },
   callbacks: {
-  async jwt({ token, user }) {
-    if (user) {
-      token.id = user.id;
-      token.username = user.username;
-      token.role = user.role;
-    }
-    return token;
-  },
-  async session({ session, token }) {
-    if (session.user) {
-      session.user.id = token.id;
-      session.user.username = token.username;
-      session.user.role = token.role;
-    }
-    return session;
-  },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.username = user.username;
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.username = token.username;
+        session.user.role = token.role;
+      }
+      return session;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnRestrictedPath = restrictedPaths.some((path: string) =>
         nextUrl.pathname.startsWith(path)
       );
       if (isOnRestrictedPath) {
-        if (isLoggedIn) return true;
-        return false;
-      }
-      else if (isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
+        return isLoggedIn;
       }
       return true;
+    },
+    async redirect({ baseUrl }) {
+      return `${baseUrl}/dashboard`;
     }
   },
 };

@@ -14,7 +14,7 @@ export const GET = async (req: Request) => {
         const users = userRepository ? await userRepository.findAll() : null;
         if (users) {
             const sanitizedUsers = users.map((user) => { user.password = ''; return user });
-            return responseJson(users);
+            return responseJson(sanitizedUsers);
         }
         
         return responseJson({});

@@ -8,12 +8,15 @@ class GenerateJwtPrivateKey {
 			return;
 		}
 
-		const cryptoObj = (globalThis as any).crypto || (globalThis as any).msCrypto;
+	const glob = globalThis as unknown as Record<string, unknown>;
+	const cryptoCandidate = glob.crypto as { getRandomValues?: (arr: Uint8Array) => Uint8Array } | undefined;
+	const msCryptoCandidate = glob.msCrypto as { getRandomValues?: (arr: Uint8Array) => Uint8Array } | undefined;
+	const cryptoObj: { getRandomValues?: (arr: Uint8Array) => Uint8Array } | undefined = cryptoCandidate || msCryptoCandidate;
 		if (!cryptoObj || typeof cryptoObj.getRandomValues !== 'function') {
 			throw new Error('Secure random number generator not available in this runtime.');
 		}
 		const bytes = cryptoObj.getRandomValues(new Uint8Array(32));
-		this.key = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+		this.key = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
 	}
 
 	public static getInstance(): GenerateJwtPrivateKey {

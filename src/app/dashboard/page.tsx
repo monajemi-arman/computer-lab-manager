@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { DefaultDashboardView } from "@/components/default-dashboard-view";
+import DefaultDashboardView from "@/components/default-dashboard-view";
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { getIsAdmin } from "@/lib/token/functions"
+import AdminUsersView from "./admin/users-view";
 
 export default async function Page() {
   const isAdmin = await getIsAdmin();
@@ -25,6 +26,7 @@ export default async function Page() {
           </div>
         </header>
         <DefaultDashboardView />
+        <AdminUsersView />
       </SidebarInset>
     </SidebarProvider>
   )

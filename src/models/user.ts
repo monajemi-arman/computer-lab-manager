@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IUser, IUserDocument } from "@/types/user";
+import { IUserDocument } from "@/types/user";
 
 const userSchema = new Schema({
   username: { type: String, required: true },
@@ -8,4 +8,5 @@ const userSchema = new Schema({
   computers: [{ type: Schema.Types.ObjectId, ref: 'Computer' }]
 });
 
-export const UserModel = mongoose.models.User || mongoose.model<IUserDocument>('User', userSchema);
+export const UserModel = (mongoose.models && mongoose.models.User) ||
+  mongoose.model<IUserDocument>('User', userSchema);

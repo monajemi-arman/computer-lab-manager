@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// eslint-disable-next-line no-var
 var env = process.env.NODE_ENV || 'development';
 
 const MONGODB_URI = process.env.MONGODB_URI;

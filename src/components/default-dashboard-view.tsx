@@ -1,8 +1,13 @@
 "use client";
 
+import { useHash } from "@/hooks/use-hash";
 import styles from "./default-dashboard-view.module.css";
 
-export function DefaultDashboardView() {
+export default function DefaultDashboardView() {
+	const hash = useHash();
+	if (hash && hash.length != 0)
+		return null;
+
 	return (
 		<div className={styles.dlmRoot}>
 				<header className={styles.hero}>

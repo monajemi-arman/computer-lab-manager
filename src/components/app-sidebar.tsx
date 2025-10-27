@@ -1,6 +1,9 @@
 "use client"
+
 import * as React from "react"
+import Link from "next/link"
 import {
+  Home,
   GalleryVerticalEnd,
   Users,
   ServerCog,
@@ -16,7 +19,6 @@ import {
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -149,12 +151,19 @@ const data = {
 export function AppSidebar({ isAdmin = false, ...props }: AppSidebarProps) {
   const navigationItems = isAdmin 
     ? [...data.adminNavMain, ...data.navMain]
-    : data.navMain
+    : data.navMain;
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Go to dashboard"
+        >
+          <Home className="w-5 h-5" />
+          <span className="font-semibold">Home</span>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navigationItems} />

@@ -7,7 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { getIsAdmin } from "@/lib/token/functions"
-import AdminUsersView from "./admin/users-view";
+import AdminUsersView from "./admin/users/view";
 
 export default async function Page() {
   const isAdmin = await getIsAdmin();

@@ -9,7 +9,7 @@ export interface LoginCredentials {
 export interface IUser {
   id?: string;
   username: string;
-  password: string;
+  password?: string;
   role: 'admin' | 'user';
   computers?: Computer[];
 }

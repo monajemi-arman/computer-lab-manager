@@ -19,7 +19,7 @@ export const POST = async (req: Request) => {
         const userRepository = container.resolve<IUserRepository>("IUserRepository");
         const user = userRepository ? await userRepository.findByUsername(loginCredentials.username) : null;
 
-        if (!user || !await comparePassword(loginCredentials.password, user.password)) {
+        if (!user || !user.password || !await comparePassword(loginCredentials.password, user.password)) {
             return responseJson("Invalid username or password", 401);
         }
 

@@ -8,8 +8,6 @@ import { DataTable } from "./data-table";
 
 
 export default function AdminUsersView() {
-  const hash = useHash();
-
   const [data, setData] = useState<IUser[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -29,19 +27,16 @@ export default function AdminUsersView() {
     };
 
     if (!isMounted) return;
-    if (hash === '#admin-users') {
-      fetchData()
-        .then((data) => setData(JSON.parse(data)))
-        .catch((err) => {
-          if ((err)?.name !== 'AbortError') {
-            console.error(err);
-          }
-        });
-    }
-    return () => controller.abort();
-  }, [hash, isMounted]);
 
-  if (!isMounted || hash !== '#admin-users') return null;
+    fetchData()
+      .then((data) => setData(JSON.parse(data)))
+      .catch((err) => {
+        if ((err)?.name !== 'AbortError') {
+          console.error(err);
+        }
+      });
+    return () => controller.abort();
+  }, [isMounted]);
 
   return (
     <DataTable columns={columns} data={data} />

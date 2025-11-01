@@ -1,3 +1,5 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar"
 import DefaultDashboardView from "@/components/default-dashboard-view";
 import { Separator } from "@/components/ui/separator"
@@ -6,11 +8,23 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { getIsAdmin } from "@/lib/token/functions"
 import AdminUsersView from "./admin/users/view";
+import { useEffect, useState } from "react";
+import { useHash } from "@/hooks/use-hash";
+import { getIsAdmin } from "../actions";
 
-export default async function Page() {
-  const isAdmin = await getIsAdmin();
+export default function Page() {
+  // States
+  const [isAdmin, setIsAdmin] = useState(false);
+  const hash = useHash();
+
+  // isAdmin
+  useEffect(() => {
+    getIsAdmin()
+      .then((result) => {
+        setIsAdmin(result)
+      })
+  }, []);
 
   return (
     <SidebarProvider>
@@ -26,7 +40,7 @@ export default async function Page() {
           </div>
         </header>
         <DefaultDashboardView />
-        <AdminUsersView />
+        {hash == '#admin-users' && <AdminUsersView />}
       </SidebarInset>
     </SidebarProvider>
   )

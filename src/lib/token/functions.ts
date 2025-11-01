@@ -29,4 +29,6 @@ export const getIsAdmin = async () => {
 
   if (session && session.user && session.user.role == 'admin')
     return true;
+  
+  return false;
 }

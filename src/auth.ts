@@ -1,7 +1,7 @@
 import { generateJwtPrivateKey } from "@/lib/token/generate-key";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { restrictedPaths } from "./lib/config/routes";
+import { checkAccessPath } from "./lib/routes";
 
 const authOptions: NextAuthConfig = {
   providers: [
@@ -65,12 +65,9 @@ const authOptions: NextAuthConfig = {
     },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnRestrictedPath = restrictedPaths.some((path: string) =>
-        nextUrl.pathname.startsWith(path)
-      );
-      if (isOnRestrictedPath) {
-        return isLoggedIn;
-      }
+      const isAdmin = auth?.user.role == 'admin';
+      const hasAccessPath = checkAccessPath(nextUrl.pathname, isLoggedIn, isAdmin);
+      if (!hasAccessPath) return false;
       return true;
     },
     async redirect({ baseUrl }) {

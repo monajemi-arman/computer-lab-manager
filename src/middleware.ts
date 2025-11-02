@@ -1,7 +1,7 @@
 import { stackMiddlewares } from "./middlewares/stack-middlewares";
-import { withAuthWrapped } from "./middlewares/withAuth";
+import { restrictPaths } from "./middlewares/restrict-paths";
 
-const middlewares = [withAuthWrapped];
+const middlewares = [restrictPaths];
 export default stackMiddlewares(middlewares);
 
 export const config = {

@@ -6,7 +6,7 @@ import {
 } from "next/server";
 import { auth } from "@/auth";
 
-export const withAuthWrapped: MiddlewareFactory = (next) => {
+export const restrictPaths: MiddlewareFactory = (next) => {
     return async (request: NextRequest, _next: NextFetchEvent) => {
 
         const nextUrl = request.nextUrl;

@@ -10,7 +10,7 @@ export const columns: ColumnDef<IUser>[] = [
   },
   {
     accessorKey: "role",
-    header: "Email",
+    header: "Role",
   },
   {
     accessorKey: "computers",

@@ -8,18 +8,19 @@ import { NextRequest } from "next/server";
 
 const userRepository = container.resolve<IUserRepository>("IUserRepository");
 
-export const GET = async (req: NextRequest) => {
-    await connectToDatabase();
+export async function GET(
+    req: NextRequest,
+    { params }: { params: Promise<{ username: string }> }
+) {
+    const username = (await params).username;
 
-    const { searchParams } = req.nextUrl;
-    const username = searchParams.get('username');
+    await connectToDatabase();
 
     if (!username)
         return responseJson("no username given", 404);
 
     const user = userRepository ? await userRepository.findByUsername(username) : null;
-    if (user)
-        user.password = '';
+    if (user) user.password = '';
 
     if (!user)
         return responseJson("user not found", 404);
@@ -27,16 +28,18 @@ export const GET = async (req: NextRequest) => {
     return responseJson(user);
 }
 
-export const PUT = async (req: NextRequest) => {
-    await connectToDatabase();
+export async function PUT(
+    req: NextRequest,
+    { params }: { params: Promise<{ username: string }> }
+) {
+    const username = (await params).username;
 
-    const { searchParams } = req.nextUrl;
-    const username = searchParams.get('username');
+    await connectToDatabase();
 
     if (!username)
         return responseJson("no username given", 404);
 
-    const user = updateUserSchema.parse(req.body);
+    const user = updateUserSchema.parse(await req.json());
 
     if (user.password && user.password.length > 0) {
         user.password = await passwordToHash(user.password);
@@ -48,14 +51,17 @@ export const PUT = async (req: NextRequest) => {
         return responseJson('not found', 404);
 
     const result = await userRepository?.update(foundUser.id, user)
+    if (result) result.password = '';
     return responseJson(result);
 }
 
-export const DELETE = async (req: NextRequest) => {
-    await connectToDatabase();
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: Promise<{ username: string }> }
+) {
+    const username = (await params).username;
 
-    const { searchParams } = req.nextUrl;
-    const username = searchParams.get('username');
+    await connectToDatabase();
 
     if (!username)
         return responseJson("no username given", 404);

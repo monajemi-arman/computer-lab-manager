@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { CirclePlus } from "lucide-react"
+import { UserEditDialog } from "./user-dialog";
+import { IUser } from "@/types/user";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -33,8 +36,12 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<IUser>();
+
   return (
     <div className="overflow-hidden rounded-md p-2">
+      <UserEditDialog open={isEditOpen} onOpenChange={setIsEditOpen} user={editingUser} />
       <div>
         <p className="p-2"><b>Manage Users</b></p>
         <Button variant="outline" size="sm">
@@ -57,6 +64,7 @@ export function DataTable<TData, TValue>({
                   </TableHead>
                 )
               })}
+              <TableHead key={`${headerGroup.id}-actions`}>Actions</TableHead>
             </TableRow>
           ))}
         </TableHeader>
@@ -72,11 +80,19 @@ export function DataTable<TData, TValue>({
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
+                <TableCell>
+                  <Button variant="outline" onClick={() => {
+                    setEditingUser(row.original as IUser)
+                    setIsEditOpen(true)
+                  }}>
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length + 1} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>

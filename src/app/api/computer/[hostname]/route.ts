@@ -64,5 +64,11 @@ export async function DELETE(
     if (!foundComputer || !foundComputer.id)
         return responseJson('not found', 404);
 
-    await computerRepository?.delete(foundComputer.id);
+    try {
+        await computerRepository?.delete(foundComputer.id);
+    } catch {
+        responseJson('db write failed', 500);
+    }
+
+    return responseJson('success', 200);
 }

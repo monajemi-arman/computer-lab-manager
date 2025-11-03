@@ -1,5 +1,5 @@
 import { HydratedDocument } from "mongoose";
-import { Computer } from "./computer";
+import { IComputer } from "./computer";
 
 export interface LoginCredentials {
   username: string;
@@ -11,7 +11,16 @@ export interface IUser {
   username: string;
   password?: string;
   role: 'admin' | 'user';
-  computers?: Computer[];
+  computers?: IComputer[];
 }
 
 export type IUserDocument = HydratedDocument<IUser>;
+
+// Input shape for creating/updating a user; computers can be array of computer ids or full objects
+export interface IUserInput {
+  id?: string;
+  username: string;
+  password?: string;
+  role: 'admin' | 'user';
+  computers?: (string | IComputer)[];
+}

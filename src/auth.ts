@@ -30,7 +30,7 @@ const authOptions: NextAuthConfig = {
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" }
         });
-        const user = JSON.parse(await res.json());
+        const user = await res.json();
 
         if (res.ok && user) {
           return user;

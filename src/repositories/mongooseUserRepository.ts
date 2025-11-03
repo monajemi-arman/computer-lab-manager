@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import { IUserRepository } from "./userRepository";
-import { IUserDocument, IUser } from "@/types/user";
+import { IUserDocument, IUserInput } from "@/types/user";
 
 export class MongooseUserRepository implements IUserRepository {
     private model: Model<IUserDocument>;
@@ -10,7 +10,7 @@ export class MongooseUserRepository implements IUserRepository {
     }
 
     async findById(id: string): Promise<IUserDocument | null> {
-        return await this.model.findById(id).exec();
+        return await this.model.findById(id).populate('computers').exec();
     }
 
     async findByUsername(username: string): Promise<IUserDocument | null> {
@@ -18,15 +18,15 @@ export class MongooseUserRepository implements IUserRepository {
     }
 
     async findAll(): Promise<IUserDocument[]> {
-        return await this.model.find().exec();
+        return await this.model.find().populate('computers').exec();
     }
 
-    async create(user: IUser): Promise<IUserDocument> {
+    async create(user: IUserInput): Promise<IUserDocument> {
         const newUser = new this.model(user);
         return await newUser.save();
     }
 
-    async update(id: string, user: IUser): Promise<IUserDocument | null> {
+    async update(id: string, user: Partial<IUserInput>): Promise<IUserDocument | null> {
         return await this.model.findByIdAndUpdate(id, user, { new: true }).exec();
     }
 

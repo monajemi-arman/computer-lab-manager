@@ -7,12 +7,14 @@ export const loginCredentialsSchema = z.object({
 
 export const createUserSchema = z.object({
     username: z.string().max(30),
-    password: z.string().min(4),
-    role: z.enum(['admin', 'user'])
+  password: z.string().min(4),
+  role: z.enum(['admin', 'user']),
+  computers: z.array(z.string()).optional(),
 })
 
 export const updateUserSchema = z.object({
     username: z.string().max(30).optional(),
     password: z.string().min(4).optional(),
-    role: z.enum(['admin', 'user']).optional()
+  role: z.enum(['admin', 'user']).optional(),
+  computers: z.array(z.string()).optional(),
 })

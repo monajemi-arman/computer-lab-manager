@@ -16,8 +16,8 @@ export const scrollToSection = (id: string) => {
   }
 };
 
-export const responseJson = (message: any, status: number = 200) => {
-  return new Response(JSON.stringify(JSON.stringify(message)), {
+export const responseJson = (message: unknown, status: number = 200) => {
+  return new Response(JSON.stringify(message), {
     status: status,
     headers: { "Content-Type": "application/json" },
   })

@@ -7,7 +7,7 @@ import { IUserRepository } from "@/repositories/userRepository";
 
 const userRepository = container.resolve<IUserRepository>("IUserRepository");
 
-export const GET = async (req: Request) => {
+export const GET = async () => {
     await connectToDatabase();
 
     try {
@@ -19,7 +19,7 @@ export const GET = async (req: Request) => {
         
         return responseJson({});
 
-    } catch (err) {
+    } catch {
         return new Response(JSON.stringify({ error: "Failed to fetch users" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },

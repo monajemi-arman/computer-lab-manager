@@ -1,12 +1,20 @@
 import { HydratedDocument } from "mongoose";
 import { IUser } from "./user";
 
-export interface Computer {
-  id: string;
+export interface IComputer {
+  id?: string;
   address: string;
   hostname: string;
   status: 'active' | 'inactive';
-  users: IUser[];
+  users?: IUser[];
 }
 
-export type IComputerDocument = HydratedDocument<Computer>;
+export interface IComputerInput {
+  id?: string;
+  address: string;
+  hostname: string;
+  status: 'active' | 'inactive';
+  users?: (string | IUser)[];
+}
+
+export type IComputerDocument = HydratedDocument<IComputer>;

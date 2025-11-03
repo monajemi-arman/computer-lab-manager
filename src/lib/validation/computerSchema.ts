@@ -8,7 +8,7 @@ export const createComputerSchema = z.object({
 })
 
 export const updateComputerSchema = z.object({
-  hostname: z.string().max(30).optional(),
+  hostname: z.string().max(30),
   address: z.string().min(4).optional(),
   status: z.enum(['active', 'inactive']).optional(),
   users: z.array(z.string()).optional(),

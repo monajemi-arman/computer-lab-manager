@@ -22,6 +22,7 @@ import { IComputer } from "@/types/computer";
 import { useState } from "react";
 import { ComputerAddDialog } from "./computer-add-dialog";
 import { ComputerDeleteAlert } from "./computer-delete-alert";
+import ComputerUsersDialog from "./computer-users-dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -41,22 +42,22 @@ export function DataTable<TData, TValue>({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isUsersOpen, setIsUsersOpen] = useState(false);
   const [editingComputer, setEditingComputer] = useState<IComputer>();
-
-  const openAddComputerDialog = () => {
-    setIsAddOpen(true);
-  }
 
   return (
     <div className="overflow-hidden rounded-md p-2">
       <ComputerEditDialog open={isEditOpen} onOpenChange={setIsEditOpen} computer={editingComputer} />
       <ComputerAddDialog open={isAddOpen} onOpenChange={setIsAddOpen} />
       {editingComputer?.hostname &&
-      <ComputerDeleteAlert open={isDeleteOpen} onOpenChange={setIsDeleteOpen} hostname={editingComputer?.hostname} />
+        <ComputerDeleteAlert open={isDeleteOpen} onOpenChange={setIsDeleteOpen} hostname={editingComputer?.hostname} />
+      }
+      {editingComputer?.hostname &&
+        <ComputerUsersDialog open={isUsersOpen} onOpenChange={setIsUsersOpen} hostname={editingComputer?.hostname} />
       }
       <div>
         <p className="p-2"><b>Manage Computers</b></p>
-        <Button variant="outline" size="sm" onClick={openAddComputerDialog}>
+        <Button variant="outline" size="sm" onClick={() => setIsAddOpen(true)}>
           <CirclePlus /> Add new computer
         </Button>
       </div>
@@ -93,6 +94,12 @@ export function DataTable<TData, TValue>({
                   </TableCell>
                 ))}
                 <TableCell>
+                  <Button variant="default" onClick={() => {
+                    setEditingComputer(row.original as IComputer);
+                    setIsUsersOpen(true);
+                  }}>
+                    Manage Users
+                  </Button>
                   <Button variant="outline" onClick={() => {
                     setEditingComputer(row.original as IComputer)
                     setIsEditOpen(true)

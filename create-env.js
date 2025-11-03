@@ -11,6 +11,8 @@
 let fs;
 let readline;
 
+const bcrypt = await import('bcryptjs');
+
 // remove top-level require()s and provide placeholders for dynamic imports
 function makeInterface() {
   return readline.createInterface({
@@ -98,10 +100,25 @@ async function main() {
   const defaultNextPublic = '/api';
   const defaultDevJwtKey = 'dev_jwt_private_key_change_me';
 
-  const MONGO_INITDB_ROOT_USERNAME = await prompt('MONGO_INITDB_ROOT_USERNAME', defaultRootUser);
-  const MONGO_INITDB_ROOT_PASSWORD = await promptHidden('MONGO_INITDB_ROOT_PASSWORD', defaultRootPass);
-  const MONGO_APP_USERNAME = await prompt('MONGO_APP_USERNAME', defaultAppUser);
-  const MONGO_APP_PASSWORD = await promptHidden('MONGO_APP_PASSWORD', defaultAppPass);
+  const MONGO_INITDB_ROOT_USERNAME = await prompt('MONGO root username', defaultRootUser);
+  const MONGO_INITDB_ROOT_PASSWORD = await promptHidden('MONGO root password', defaultRootPass);
+  const MONGO_APP_USERNAME = await prompt('MONGO normal user', defaultAppUser);
+  const MONGO_APP_PASSWORD = await promptHidden('MONGO normal password', defaultAppPass);
+
+  // Prompt for optional admin credentials (defaults empty)
+  const ADMIN_USERNAME = await prompt('Admin username for dashboard login', '');
+  const ADMIN_PASSWORD = await promptHidden('Admin password for dashboard login', '');
+
+  const passwordToHash = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  };
+  const ADMIN_PASSWORD_HASHED = await passwordToHash(ADMIN_PASSWORD);
+
+  // Build optional admin env entries only if provided
+  let adminEntries = '';
+  if (ADMIN_USERNAME) adminEntries += `ADMIN_USERNAME=${ADMIN_USERNAME}\n`;
+  if (ADMIN_PASSWORD) adminEntries += `ADMIN_PASSWORD=${ADMIN_PASSWORD_HASHED}\n`;
 
   // Hosts and DB not asked for by default, but we keep the original hosts per file:
   const MONGO_HOST_DEV = defaultDevHost;
@@ -114,7 +131,7 @@ MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
-MONGO_HOST=${MONGO_HOST_DEV}  # Development
+${adminEntries}MONGO_HOST=${MONGO_HOST_DEV}  # Development
 MONGO_DB=${MONGO_DB}
 MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_DEV}:27017/${MONGO_DB}
 DEV_JWT_PRIVATE_KEY=${defaultDevJwtKey}
@@ -128,7 +145,7 @@ MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
-MONGO_HOST=${MONGO_HOST_PROD}  # Production
+${adminEntries}MONGO_HOST=${MONGO_HOST_PROD}  # Production
 MONGO_DB=${MONGO_DB}
 MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_PROD}:27017/${MONGO_DB}
 
@@ -141,7 +158,7 @@ MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
-MONGO_DB=${MONGO_DB}
+${adminEntries}MONGO_DB=${MONGO_DB}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}

@@ -8,3 +8,10 @@ db.createUser({
     }
   ]
 });
+
+db.users.insertOne({
+  username: process.env.ADMIN_USERNAME || 'admin',
+  password: process.env.ADMIN_PASSWORD || '$2b$10$Pn6nWEm7AABeCkR29RKkKeKxjaDz29LfcL65hCGrLdVJOIF.GBAA6', // admin
+  role: 'admin',
+  computers: []
+});

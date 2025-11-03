@@ -5,17 +5,17 @@ import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
 
 
-export default function AdminUsersView() {
+export default function AdminComputersView() {
   const { data, isLoading } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["computers"],
     queryFn: async () => {
-      const res = await fetch("/api/user");
-      if (!res.ok) throw new Error(`Failed to fetch users: ${res.status} ${res.statusText}`);
+      const res = await fetch("/api/computer");
+      if (!res.ok) throw new Error(`Failed to fetch computers: ${res.status} ${res.statusText}`);
       return await res.json();
     }
   });
 
-  if (isLoading) return "Loading users...";
+  if (isLoading) return "Loading computers...";
   return (
     <DataTable columns={columns} data={data} />
   )

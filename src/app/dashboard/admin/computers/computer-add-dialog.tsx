@@ -53,8 +53,7 @@ export function ComputerAddDialog({
       return res.json().catch(() => null);
     },
     onSuccess: () => {
-      setOpen(false);
-      queryClient.invalidateQueries({queryKey: ['computers']});
+      queryClient.invalidateQueries({queryKey: ['computer-users']});
     }
   })
   

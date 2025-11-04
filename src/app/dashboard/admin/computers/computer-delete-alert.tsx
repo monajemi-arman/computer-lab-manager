@@ -20,20 +20,19 @@ export function ComputerDeleteAlert({
     const queryClient = useQueryClient();
     const deleteComputer = useMutation({
         mutationFn: async (hostname: string) => {
-      const res = await fetch('/api/computer/' + hostname, {
-        method: "DELETE",
-        credentials: "same-origin",
-      });
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(`Failed to save computer: ${res.status} ${text}`);
-      }
-      return res.json().catch(() => null);
-    },
-    onSuccess: () => {
-      onOpenChange(false);
-      queryClient.invalidateQueries({queryKey: ['computers']});
-    }
+            const res = await fetch('/api/computer/' + hostname, {
+                method: "DELETE",
+                credentials: "same-origin",
+            });
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`Failed to save computer: ${res.status} ${text}`);
+            }
+            return res.json().catch(() => null);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['computer-users'] });
+        }
     });
 
     return (

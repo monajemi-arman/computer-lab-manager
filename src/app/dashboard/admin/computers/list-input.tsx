@@ -29,9 +29,6 @@ export function ListInput({
   const componentRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
-  const onChangeItem = () => {
-    queryClient.invalidateQueries({ queryKey: ['computer-users'] });
-  }
 
   const editComputerUsers = useMutation({
     mutationFn: async (newUsers: string[]) => {
@@ -71,14 +68,12 @@ export function ListInput({
   const handleAdd = () => {
     if (input.trim()) {
       addUsernameToComputer(input.trim(), hostname);
-      onChangeItem()
       setInput("")
     }
   }
 
   const handleRemove = (itemToRemove: string) => {
     removeUsernameFromComputer(itemToRemove, hostname);
-    onChangeItem()
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

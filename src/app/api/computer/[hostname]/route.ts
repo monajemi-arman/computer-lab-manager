@@ -1,6 +1,6 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
-import { responseJson } from "@/lib/utils";
+import { computerUsersToUsernames, responseJson } from "@/lib/utils";
 import { updateComputerSchema } from "@/lib/validation/computerSchema";
 import { IComputerRepository } from "@/repositories/computerRepository";
 import { IUserRepository } from "@/repositories/userRepository";
@@ -26,7 +26,7 @@ export async function GET(
     if (!computer)
         return responseJson("computer not found", 404);
 
-    return responseJson(computer);
+    return responseJson(computerUsersToUsernames(computer));
 }
 
 export async function PUT(
@@ -40,7 +40,7 @@ export async function PUT(
     if (!hostname)
         return responseJson("no hostname given", 404);
 
-    const computer = updateComputerSchema.parse(await req.json());
+    const parsed = updateComputerSchema.parse(await req.json());
 
     const foundComputer = computerRepository ? await computerRepository.findByHostname(hostname) : null;;
 
@@ -48,18 +48,19 @@ export async function PUT(
         return responseJson('not found', 404);
 
     // Resolve computer users
-    const newComputer: Partial<IComputerInput> = computer;
-    newComputer.users = []
-    if (computer && computer.users) {
-        for (const username of computer.users) {
+    const computer: Partial<IComputerInput> = { ...parsed };
+    const foundUsers = [];
+    if (parsed.users?.length) {
+        for (const username of parsed.users) {
             const foundUser = userRepository ? await userRepository.findByUsername(username) : null;
             if (foundUser)
-                newComputer.users.push(foundUser);
+                foundUsers.push(foundUser);
         }
+        computer.users = foundUsers;
     }
 
-    const result = await computerRepository?.update(foundComputer.id, computer);
-    return responseJson(result);
+    const result = await computerRepository?.update(foundComputer.id, computer) ?? null;
+    return responseJson(result ? computerUsersToUsernames(result) : {});
 }
 
 export async function DELETE(

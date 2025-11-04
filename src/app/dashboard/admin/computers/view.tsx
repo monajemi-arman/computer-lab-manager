@@ -4,9 +4,8 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
 
-
 export default function AdminComputersView() {
-  const { data, isLoading } = useQuery({
+  const { data: computers, isLoading } = useQuery({
     queryKey: ["computers"],
     queryFn: async () => {
       const res = await fetch("/api/computer");
@@ -17,6 +16,6 @@ export default function AdminComputersView() {
 
   if (isLoading) return "Loading computers...";
   return (
-    <DataTable columns={columns} data={data} />
+    <DataTable columns={columns} data={computers} />
   )
 }

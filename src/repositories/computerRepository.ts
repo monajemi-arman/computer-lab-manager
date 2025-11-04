@@ -1,10 +1,10 @@
-import { IComputer, IComputerInput } from "@/types/computer";
+import {IComputerDocument, IComputerInput } from "@/types/computer";
 
 export interface IComputerRepository {
-  findById(id: string): Promise<IComputer | null>;
-  findByHostname(hostname: string): Promise<IComputer | null>;
-  findAll(): Promise<IComputer[]>;
-  create(Computer: IComputerInput): Promise<IComputer>;
-  update(id: string, Computer: Partial<IComputerInput>): Promise<IComputer | null>;
+  findById(id: string): Promise<IComputerDocument | null>;
+  findByHostname(hostname: string): Promise<IComputerDocument | null>;
+  findAll(): Promise<IComputerDocument[]>;
+  create(Computer: IComputerInput): Promise<IComputerDocument>;
+  update(id: string, Computer: Partial<IComputerInput>): Promise<IComputerDocument | null>;
   delete(id: string): Promise<boolean>;
 }

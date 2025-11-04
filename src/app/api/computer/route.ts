@@ -1,6 +1,6 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
-import { responseJson } from "@/lib/utils";
+import { computerUsersToUsernames, responseJson } from "@/lib/utils";
 import { createComputerSchema } from "@/lib/validation/computerSchema";
 import { IComputerRepository } from "@/repositories/computerRepository";
 
@@ -12,9 +12,9 @@ export const GET = async () => {
     try {
         const computers = computerRepository ? await computerRepository.findAll() : null;
         if (computers) {
-            return responseJson(computers);
+            return responseJson(computers.map(computerUsersToUsernames));
         }
-        
+
         return responseJson({});
 
     } catch {
@@ -30,7 +30,7 @@ export const POST = async (req: Request) => {
 
     try {
         const body = await req.json();
-    const computer = createComputerSchema.parse(body);
+        const computer = createComputerSchema.parse(body);
 
         const foundComputer = computerRepository ? await computerRepository.findByHostname(computer.hostname) : null;
 
@@ -42,7 +42,7 @@ export const POST = async (req: Request) => {
         }
 
         const created = await computerRepository.create(computer);
-        return responseJson(created, 201);
+        return responseJson(computerUsersToUsernames(created), 201);
 
     } catch (err: any) {    // eslint-disable-line
         const message = err?.message || "Invalid request";

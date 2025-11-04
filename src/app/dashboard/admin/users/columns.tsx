@@ -12,8 +12,4 @@ export const columns: ColumnDef<IUser>[] = [
     accessorKey: "role",
     header: "Role",
   },
-  {
-    accessorKey: "computers",
-    header: "Computers",
-  },
 ]

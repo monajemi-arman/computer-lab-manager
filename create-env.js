@@ -138,8 +138,12 @@ async function main() {
     const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
     console.log('SSH private key generated successfully.');
 
+    // Convert the public key to OpenSSH format
+    const publicKeyOpenSSH = forge.ssh.publicKeyToOpenSSH(keypair.publicKey, 'generated-key');
+    console.log('SSH public key generated successfully in OpenSSH format.');
+
     // Wrap the multi-line key in double quotes for .env files
-    sshKeyEntry = `\n# SSH Private Key (auto-generated)\nSSH_PRIVATE_KEY="${privateKeyPem}"\n`;
+    sshKeyEntry = `\n# SSH Private Key (auto-generated)\nSSH_PRIVATE_KEY="${privateKeyPem}"\n# SSH Public Key (auto-generated)\nSSH_PUBLIC_KEY="${publicKeyOpenSSH}"\n`;
 
     // Compose file contents
     const envDevelopment = `# Modify username and password for security

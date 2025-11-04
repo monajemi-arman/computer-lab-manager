@@ -4,12 +4,12 @@
  *
  * Usage: node create-env.js
  *
- * Prompts the user for root/app usernames and passwords
- * and creates/overwrites .env.development, .env.production, and .env files based on the templates.
+ * creates .env.development, .env.production, and .env files based on the templates and user input.
  */
 
 let fs;
 let readline;
+let forge;
 
 const bcrypt = await import('bcryptjs');
 
@@ -81,6 +81,8 @@ async function main() {
   fs = fsModule.default || fsModule;
   const rlModule = await import('readline');
   readline = rlModule.default || rlModule;
+  const forgeModule = await import('node-forge'); // Dynamically import node-forge
+  forge = forgeModule.default || forgeModule; // Assign forge
 
   console.log('This will create/overwrite: .env.development, .env.production, .env');
   const cont = (await prompt('Continue? (y/n)', 'y')).toLowerCase();
@@ -113,7 +115,8 @@ async function main() {
     const salt = await bcrypt.genSalt(10);
     return await bcrypt.hash(password, salt);
   };
-  const ADMIN_PASSWORD_HASHED = await passwordToHash(ADMIN_PASSWORD);
+  // Only hash if password is provided, otherwise set to empty string
+  const ADMIN_PASSWORD_HASHED = ADMIN_PASSWORD ? await passwordToHash(ADMIN_PASSWORD) : '';
 
   // Build optional admin env entries only if provided
   let adminEntries = '';
@@ -125,8 +128,21 @@ async function main() {
   const MONGO_HOST_PROD = defaultProdHost;
   const MONGO_DB = defaultDB;
 
-  // Compose file contents
-  const envDevelopment = `# Modify username and password for security
+  let sshKeyEntry = ''; // Initialize sshKeyEntry
+
+  try {
+    console.log('Generating SSH private key using JavaScript...');
+    // Generate an RSA key pair with 4096 bits
+    const keypair = await forge.pki.rsa.generateKeyPair({ bits: 4096, e: 0x10001 });
+    // Convert the private key to PEM format
+    const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
+    console.log('SSH private key generated successfully.');
+
+    // Wrap the multi-line key in double quotes for .env files
+    sshKeyEntry = `\n# SSH Private Key (auto-generated)\nSSH_PRIVATE_KEY="${privateKeyPem}"\n`;
+
+    // Compose file contents
+    const envDevelopment = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
@@ -138,9 +154,9 @@ DEV_JWT_PRIVATE_KEY=${defaultDevJwtKey}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
-`;
+${sshKeyEntry}`; // Append SSH key entry
 
-  const envProduction = `# Modify username and password for security
+    const envProduction = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
@@ -151,9 +167,9 @@ MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_P
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
-`;
+${sshKeyEntry}`; // Append SSH key entry
 
-  const env = `# Modify username and password for security
+    const env = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
@@ -162,15 +178,14 @@ ${adminEntries}MONGO_DB=${MONGO_DB}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
-`;
+${sshKeyEntry}`; // Append SSH key entry
 
-  try {
     fs.writeFileSync('.env.development', envDevelopment, { encoding: 'utf8' });
     fs.writeFileSync('.env.production', envProduction, { encoding: 'utf8' });
     fs.writeFileSync('.env', env, { encoding: 'utf8' });
     console.log('Files written: .env.development, .env.production, .env');
   } catch (err) {
-    console.error('Error writing files:', err);
+    console.error('Error during environment setup:', err);
     process.exit(1);
   }
 }

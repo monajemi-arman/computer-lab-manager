@@ -12,15 +12,18 @@ export interface IUser {
   password?: string;
   role: 'admin' | 'user';
   computers?: IComputer[];
+  privateKey?: string;
+  publicKey?: string;
 }
 
 export type IUserDocument = HydratedDocument<IUser>;
 
-// Input shape for creating/updating a user; computers can be array of computer ids or full objects
 export interface IUserInput {
   id?: string;
   username: string;
   password?: string;
   role: 'admin' | 'user';
   computers?: (string | IComputer)[];
+  privateKey?: string;
+  publicKey?: string;
 }

@@ -1,10 +1,10 @@
-import { IUser, IUserInput } from "@/types/user";
+import { IUserDocument, IUserInput } from "@/types/user";
 
 export interface IUserRepository {
-  findById(id: string): Promise<IUser | null>;
-  findByUsername(username: string): Promise<IUser | null>;
-  findAll(): Promise<IUser[]>;
-  create(user: IUserInput): Promise<IUser>;
-  update(id: string, user: Partial<IUserInput>): Promise<IUser | null>;
+  findById(id: string): Promise<IUserDocument | null>;
+  findByUsername(username: string): Promise<IUserDocument | null>;
+  findAll(): Promise<IUserDocument[]>;
+  create(user: IUserInput): Promise<IUserDocument>;
+  update(id: string, user: Partial<IUserInput>): Promise<IUserDocument | null>;
   delete(id: string): Promise<boolean>;
 }

@@ -1,9 +1,11 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
+import { generateSshKeys } from "@/lib/orchestrator/utils";
 import { passwordToHash } from "@/lib/password/hash";
-import { responseJson } from "@/lib/utils";
+import { responseJson, sanitizeUserOutput } from "@/lib/utils";
 import { createUserSchema } from "@/lib/validation/userSchema";
 import { IUserRepository } from "@/repositories/userRepository";
+import { IUserInput } from "@/types/user";
 
 const userRepository = container.resolve<IUserRepository>("IUserRepository");
 
@@ -13,7 +15,7 @@ export const GET = async () => {
     try {
         const users = userRepository ? await userRepository.findAll() : null;
         if (users) {
-            const sanitizedUsers = users.map((user) => { user.password = ''; return user });
+            const sanitizedUsers = users.map((user) => sanitizeUserOutput(user.toObject()));
             return responseJson(sanitizedUsers);
         }
         
@@ -44,9 +46,13 @@ export const POST = async (req: Request) => {
             return responseJson("User with the given username already exists!");
         }
 
-        const created = await userRepository.create(user);
-        created.password = '';
-        return responseJson(created, 201);
+        // generate user keys
+        const keys = await generateSshKeys();
+        if (!keys) throw new Error("Failed to generate SSH keys.");
+        const richUser: IUserInput = {...user, privateKey: keys.private, publicKey: keys.public};
+
+        const created = await userRepository.create(richUser);
+        return responseJson(sanitizeUserOutput(created.toObject()), 201);
 
     } catch (err: any) {    // eslint-disable-line
         const message = err?.message || "Invalid request";

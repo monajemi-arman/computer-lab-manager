@@ -1,7 +1,7 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
 import { passwordToHash } from "@/lib/password/hash";
-import { responseJson } from "@/lib/utils";
+import { responseJson, sanitizeUserOutput } from "@/lib/utils";
 import { updateUserSchema } from "@/lib/validation/userSchema";
 import { IUserRepository } from "@/repositories/userRepository";
 import { NextRequest } from "next/server";
@@ -25,7 +25,7 @@ export async function GET(
     if (!user)
         return responseJson("user not found", 404);
 
-    return responseJson(user);
+    return responseJson(sanitizeUserOutput(user.toObject()));
 }
 
 export async function PUT(
@@ -51,8 +51,8 @@ export async function PUT(
         return responseJson('not found', 404);
 
     const result = await userRepository?.update(foundUser.id, user)
-    if (result) result.password = '';
-    return responseJson(result);
+    if (result) return responseJson(sanitizeUserOutput(result.toObject()));
+    return responseJson({});
 }
 
 export async function DELETE(

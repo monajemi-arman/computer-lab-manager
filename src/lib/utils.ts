@@ -1,5 +1,5 @@
 import { IComputer, IComputerDocument as HydratedDocument } from "@/types/computer";
-import { IUser } from "@/types/user";
+import { IUser, IUserDocument, IUserInput } from "@/types/user";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -19,13 +19,13 @@ export const scrollToSection = (id: string) => {
 };
 
 export const waitFor = (
-  conditionFn: () => boolean, 
+  conditionFn: () => boolean,
   interval = 100,
   timeout = 20000
 ) => {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
-    
+
     const timer = setInterval(() => {
       if (conditionFn()) {
         clearInterval(timer);
@@ -38,7 +38,20 @@ export const waitFor = (
   });
 }
 
+export const sanitizeUserOutput = (user: IUserInput | IUser | IUserDocument) => {
+  const propertiesToRemove = ['password', 'privateKey', 'publicKey'] as const;
+
+  const sanitized = { ...user };
+
+  for (const prop of propertiesToRemove) {
+    delete sanitized[prop];
+  }
+
+  return sanitized;
+};
+
 export const responseJson = (message: unknown, status: number = 200) => {
+
   return new Response(JSON.stringify(isHydratedDocument(message) ? message.toObject() : message), {
     status: status,
     headers: { "Content-Type": "application/json" },

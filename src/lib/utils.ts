@@ -18,6 +18,26 @@ export const scrollToSection = (id: string) => {
   }
 };
 
+export const waitFor = (
+  conditionFn: () => boolean, 
+  interval = 100,
+  timeout = 20000
+) => {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    
+    const timer = setInterval(() => {
+      if (conditionFn()) {
+        clearInterval(timer);
+        resolve(true);
+      } else if (Date.now() - startTime >= timeout) {
+        clearInterval(timer);
+        reject(new Error(`waitFor timed out after ${timeout}ms`));
+      }
+    }, interval);
+  });
+}
+
 export const responseJson = (message: unknown, status: number = 200) => {
   return new Response(JSON.stringify(isHydratedDocument(message) ? message.toObject() : message), {
     status: status,

@@ -72,4 +72,5 @@ export async function DELETE(
         return responseJson('not found', 404);
 
     await userRepository?.delete(foundUser.id);
+    return responseJson({});
 }

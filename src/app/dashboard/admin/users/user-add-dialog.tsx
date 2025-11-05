@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IUser } from "@/types/user";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function UserAddDialog({
   open: openProp,
@@ -23,6 +23,7 @@ export function UserAddDialog({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
+  const queryClient = useQueryClient();
   const [internalOpen, setInternalOpen] = useState(false)
   const isControlled = openProp !== undefined
   const open = isControlled ? openProp! : internalOpen
@@ -51,6 +52,7 @@ export function UserAddDialog({
       return res.json().catch(() => null);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['users']});
       setOpen(false);
     }
   })

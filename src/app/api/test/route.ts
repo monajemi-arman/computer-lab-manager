@@ -1,4 +1,4 @@
-import { connectionManager } from "@/lib/orchestrator/connection";
+import { connectionManager } from "@/lib/systems-orchestrator/connection";
 import { responseJson } from "@/lib/utils";
 
 export const GET = async () => {

@@ -1,6 +1,6 @@
 import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
-import { generateSshKeys } from "@/lib/orchestrator/utils";
+import { generateSshKeys } from "@/lib/systems-orchestrator/utils";
 import { passwordToHash } from "@/lib/password/hash";
 import { responseJson, sanitizeUserOutput } from "@/lib/utils";
 import { createUserSchema } from "@/lib/validation/userSchema";

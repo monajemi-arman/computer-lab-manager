@@ -3,6 +3,7 @@ import { connectToDatabase } from '../mongodb';
 import { container } from '../container';
 import { IComputerRepository } from '@/repositories/computerRepository';
 import { waitFor } from '../utils';
+import { CommandResult, CommandStatus } from './command';
 
 class Connection {
     client: Client;
@@ -72,8 +73,7 @@ class ConnectionManager {
         return connection.client;
     }
 
-    async runCommandOnHost(hostname: string, command: string) {
-        const client = await this.hostnameToClient(hostname);
+    async runCommandOnClient(client: Client, command: string) {
         if (!client) return null;
 
         const commandResult = new CommandResult();
@@ -95,37 +95,6 @@ class ConnectionManager {
         await waitFor(() => commandResult.ended);
         return commandResult;
     }
-}
-
-class CommandResult {
-    status: CommandStatus
-    returnCode: number
-    outputArray: string[]
-
-    constructor() {
-        this.status = CommandStatus.pending;
-        this.returnCode = 0;
-        this.outputArray = [];
-    }
-
-    get output() {
-        if (this.outputArray.length === 0) return;
-        return this.outputArray?.join('\n');
-    }
-
-    get ended() {
-        if ([CommandStatus.failed, CommandStatus.done].includes(this.status))
-            return true;
-        else
-            return false;
-    }
-}
-
-export enum CommandStatus {
-    failed = -1,
-    pending = 0,
-    running = 1,
-    done = 2
 }
 
 export const connectionManager = ConnectionManager.instance;

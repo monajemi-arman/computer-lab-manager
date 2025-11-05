@@ -84,7 +84,7 @@ class ConnectionManager {
                 return;
             }
             stream.on('data', (data: string) => {
-                commandResult.outputArray.push(data);
+                commandResult.outputArray.push(data.toString().trim());
             });
             stream.on("exit", (code) => {
                 commandResult.returnCode = code;
@@ -92,6 +92,7 @@ class ConnectionManager {
             });
         })
         
+        await waitFor(() => commandResult.ended);
         return commandResult;
     }
 }
@@ -111,13 +112,20 @@ class CommandResult {
         if (this.outputArray.length === 0) return;
         return this.outputArray?.join('\n');
     }
+
+    get ended() {
+        if ([CommandStatus.failed, CommandStatus.done].includes(this.status))
+            return true;
+        else
+            return false;
+    }
 }
 
 export enum CommandStatus {
-    failed,
-    pending,
-    running,
-    done
+    failed = -1,
+    pending = 0,
+    running = 1,
+    done = 2
 }
 
 export const connectionManager = ConnectionManager.instance;

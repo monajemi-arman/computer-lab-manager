@@ -59,8 +59,26 @@ export class Operation {
         return !!result?.success;
     }
 
+    // Has username
+    @WithClient()
+    async hasUsername(client: Client, username: string) {
+        const result = await this.run(
+            client, `grep -c '^${username}:' /etc/passwd`
+        );
+
+        if (!result || !result.success) throw new Error("Failed to check user exists.");
+
+        if (result.output?.includes('1'))
+            return true;
+        else
+            return false;
+    }
+
+    // Add user
     @WithClient()
     async addUser(client: Client, user: IUser) {
+        if (await this.hasUsername(client, user.username)) return true;
+
         let result = await this.run(
             client, `sudo useradd -m ${user.username}`
         );

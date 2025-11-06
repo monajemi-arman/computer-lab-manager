@@ -1,8 +1,10 @@
 "use client";
 
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 
 
 export default function AdminUsersView() {
@@ -15,7 +17,12 @@ export default function AdminUsersView() {
     }
   });
 
-  if (isLoading) return "Loading users...";
+  if (isLoading) return (
+    <Alert className="w1/4">
+      <Loader />
+      <AlertTitle>Loading users...</AlertTitle>
+    </Alert>
+  );
   return (
     <DataTable columns={columns} data={data} />
   )

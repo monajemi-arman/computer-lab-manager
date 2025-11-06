@@ -3,6 +3,8 @@
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Loader } from "lucide-react";
 
 export default function AdminComputersView() {
   const { data: computers, isLoading } = useQuery({
@@ -14,7 +16,13 @@ export default function AdminComputersView() {
     }
   });
 
-  if (isLoading) return "Loading computers...";
+  if (isLoading) return (
+    <Alert className="w1/4">
+      <Loader />
+      <AlertTitle>Loading computers...</AlertTitle>
+    </Alert>
+  )
+
   return (
     <DataTable columns={columns} data={computers} />
   )

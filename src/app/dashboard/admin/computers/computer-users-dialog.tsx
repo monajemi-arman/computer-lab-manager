@@ -1,7 +1,9 @@
 "use client"
 
-import { ListInput } from "@/app/dashboard/admin/computers/list-input"
-import { useQuery } from "@tanstack/react-query"
+import { ListInput } from "@/app/dashboard/admin/computers/list-input";
+import { useQuery } from "@tanstack/react-query";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Loader } from "lucide-react";
 
 export default function ComputerUsersDialog({
     open, onOpenChange, hostname
@@ -20,7 +22,12 @@ export default function ComputerUsersDialog({
     });
 
     if (!open || !hostname) return null;
-    if (isPending || !computer) return "Loading computer users...";
+    if (isPending || !computer) return (
+        <Alert className="w1/4">
+            <Loader />
+            <AlertTitle>Loading computer users...</AlertTitle>
+        </Alert>
+    );
 
     return (
         <>

@@ -23,6 +23,7 @@ import { useState } from "react";
 import { ComputerAddDialog } from "./computer-add-dialog";
 import { ComputerDeleteAlert } from "./computer-delete-alert";
 import ComputerUsersDialog from "./computer-users-dialog";
+import { ComputerActivateDialog } from "./computer-activate-dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -43,6 +44,7 @@ export function DataTable<TData, TValue>({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isUsersOpen, setIsUsersOpen] = useState(false);
+  const [isActivateDialogOpen, setIsActivateDialogOpen] = useState(false);
   const [editingComputer, setEditingComputer] = useState<IComputer>();
 
   return (
@@ -54,6 +56,9 @@ export function DataTable<TData, TValue>({
       }
       {editingComputer?.hostname &&
         <ComputerUsersDialog open={isUsersOpen} onOpenChange={setIsUsersOpen} hostname={editingComputer?.hostname} />
+      }
+      {editingComputer?.hostname &&
+        <ComputerActivateDialog open={isActivateDialogOpen} onOpenChange={setIsActivateDialogOpen} hostname={editingComputer?.hostname} />
       }
       <div>
         <p className="p-2"><b>Manage Computers</b></p>
@@ -95,6 +100,12 @@ export function DataTable<TData, TValue>({
                 ))}
                 <TableCell>
                   <Button variant="default" onClick={() => {
+                    setEditingComputer(row.original as IComputer);
+                    setIsActivateDialogOpen(true);
+                  }}>
+                    Activate
+                  </Button>
+                  <Button variant="outline" onClick={() => {
                     setEditingComputer(row.original as IComputer);
                     setIsUsersOpen(true);
                   }}>

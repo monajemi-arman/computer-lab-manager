@@ -1,7 +1,9 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getActivationScript } from "@/lib/systems-orchestrator/activate";
-import { Operation } from "@/lib/systems-orchestrator/operation";
+import { useQuery } from "@tanstack/react-query";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
@@ -15,6 +17,12 @@ export function ComputerActivateDialog({
     hostname: string
 }) {
     const [copied, setCopied] = useState(false);
+    const { } = useQuery({
+        queryKey: ['computer-activation-' + hostname],
+        queryFn: async () => {
+            return await fetch("/api/operation/test/" + hostname);
+        }
+    })
 
     const activationScript = getActivationScript();
 
@@ -37,19 +45,16 @@ export function ComputerActivateDialog({
         }, 2000)
     }
     const handleActivate = async () => {
-        'use server';
 
-        const op = new Operation(hostname);
-        return await op.test();
     }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Initial setup for: ${hostname}</DialogTitle>
+                    <DialogTitle>Initial setup for: {hostname}</DialogTitle>
                     <DialogDescription>
-                        Run this script on the computer, then click on <strong>Activate</strong>
+                        Run this script on the computer first, then click on <strong>Activate</strong>
                     </DialogDescription>
                 </DialogHeader>
                 <div className="mt-4 max-h-[60vh] overflow-auto">
@@ -69,11 +74,11 @@ export function ComputerActivateDialog({
                             </>
                         )}
                     </Button>
-                    <Button onClick={handleDownloadScript}>
+                    <Button onClick={handleDownloadScript} variant={"outline"}>
                         Download Script
                     </Button>
                     <Button onClick={handleActivate}>
-                        Download Script
+                        Activate
                     </Button>
                 </div>
             </DialogContent>

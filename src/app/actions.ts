@@ -11,11 +11,11 @@ export async function loginAction(state: any, formData: FormData) { // eslint-di
     if (isRedirectError(error)) {
       throw error
     }
-    
+
     if (error instanceof CredentialsSignin) {
       return { error: "Invalid username or password" }
     }
-    
+
     return { error: "An error occurred during login" }
   }
 }
@@ -29,6 +29,6 @@ export const getIsAdmin = async () => {
 
   if (session && session.user && session.user.role == 'admin')
     return true;
-  
+
   return false;
 }

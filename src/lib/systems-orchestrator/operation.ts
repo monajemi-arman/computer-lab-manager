@@ -1,4 +1,3 @@
-import { Client } from "ssh2";
 import { connectionManager } from "./connection"
 import { IUser } from "@/types/user";
 
@@ -29,14 +28,14 @@ export class Operation {
 
         return await connectionManager.runCommandOnClient(client, command);
     }
-
+    
     // Test
     async test() {
         const result = await this.run(
             "echo test"
         );
-
-        if (!result || !result.success) throw new Error("Failed to run command.");
+        
+        if (!result || !result.success) return false;
 
         if (result.output?.includes('test'))
             return true;

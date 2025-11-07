@@ -54,8 +54,8 @@ export function ComputerEditDialog({
       return res.json().catch(() => null);
     },
     onSuccess: () => {
-      setOpen(false);
       queryClient.invalidateQueries({queryKey: ['computers']});
+      setOpen(false);
     }
   })
 

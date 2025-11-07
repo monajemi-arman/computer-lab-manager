@@ -31,7 +31,7 @@ export function ComputerDeleteAlert({
             return res.json().catch(() => null);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['computer-users'] });
+            queryClient.invalidateQueries({ queryKey: ['computers'] });
         }
     });
 

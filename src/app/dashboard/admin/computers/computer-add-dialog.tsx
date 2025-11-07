@@ -53,7 +53,8 @@ export function ComputerAddDialog({
       return res.json().catch(() => null);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['computer-users']});
+      queryClient.invalidateQueries({queryKey: ['computers']});
+      setOpen(false);
     }
   })
   
@@ -71,13 +72,6 @@ export function ComputerAddDialog({
 
             const form = e.target as HTMLFormElement;
 
-            // read status element safely (fallback to checking the named element)
-            const statusEl = form.elements.namedItem('status') as HTMLSelectElement | null;
-            const statusValue = statusEl ? statusEl.value : undefined;
-            if (!statusValue) return;
-
-            const status = statusValue === 'active' ? 'active' : 'inactive';
-
             // read hostname
             const hostnameEl = form.elements.namedItem('hostname') as HTMLInputElement | null;
             const hostname = hostnameEl ? hostnameEl.value : undefined;
@@ -90,7 +84,7 @@ export function ComputerAddDialog({
 
             const payload: IComputer = {
               address: address,
-              status: status,
+              status: 'inactive',
               hostname: hostname
             }
 
@@ -111,18 +105,7 @@ export function ComputerAddDialog({
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="status-1">Status</Label>
                 <div className="relative">
-                  <select
-                    id="status-1"
-                    name="status"
-                    aria-label="Computer status"
-                    defaultValue="active"
-                    className="w-full appearance-none rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm focus:border-sky-400 focus:ring-2 focus:ring-sky-200 disabled:opacity-50"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
                   <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
                       <path

@@ -1,27 +1,6 @@
 import { Client } from "ssh2";
 import { connectionManager } from "./connection"
 import { IUser } from "@/types/user";
-import { CommandResult, CommandStatus } from "./command";
-
-interface OperationWithClient {
-    getClient(): Promise<Client | null>;
-}
-
-// Decorator definition
-function WithClient() {
-    return function (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) {
-        const originalMethod = descriptor.value;
-
-        descriptor.value = async function (this: OperationWithClient, ...args: unknown[]) {
-            const client = await this.getClient();
-            if (!client) return;
-
-            return originalMethod.apply(this, [client, ...args]);
-        };
-
-        return descriptor;
-    };
-}
 
 export class Operation {
     hostname: string;
@@ -44,26 +23,40 @@ export class Operation {
     /** Operations **/
 
     // Basic command
-    @WithClient()
-    async run(client: Client, command: string) {
+    async run(command: string) {
+        const client = await this.getClient();
+        if (!client) return;
+
         return await connectionManager.runCommandOnClient(client, command);
     }
 
-    // Uptime
-    @WithClient()
-    async uptime(client: Client) {
+    // Test
+    async test() {
         const result = await this.run(
-            client, "uptime -p | cut -d' ' -f2-"
+            "echo test"
+        );
+
+        if (!result || !result.success) throw new Error("Failed to run command.");
+
+        if (result.output?.includes('test'))
+            return true;
+        else
+            return false;
+    }
+
+    // Uptime
+    async uptime() {
+        const result = await this.run(
+            "uptime -p | cut -d' ' -f2-"
         );
 
         return !!result?.success;
     }
 
     // Has username
-    @WithClient()
-    async hasUsername(client: Client, username: string) {
+    async hasUsername(username: string) {
         const result = await this.run(
-            client, `grep -c '^${username}:' /etc/passwd`
+            `grep -c '^${username}:' /etc/passwd`
         );
 
         if (!result || !result.success) throw new Error("Failed to check user exists.");
@@ -75,12 +68,11 @@ export class Operation {
     }
 
     // Add user
-    @WithClient()
-    async addUser(client: Client, user: IUser) {
-        if (await this.hasUsername(client, user.username)) return true;
+    async addUser(user: IUser) {
+        if (await this.hasUsername(user.username)) return true;
 
         let result = await this.run(
-            client, `sudo useradd -m ${user.username}`
+            `sudo useradd -m ${user.username}`
         );
 
         if (!result || !result.success || !user.publicKey) return false;
@@ -92,7 +84,7 @@ export class Operation {
             printf '%s\\n' 'ssh-ed25519 ${user.publicKey}' >> $TARGET/.ssh/authorized_keys &&
             chmod 600 $TARGET/.ssh/authorized_keys
             `;
-        result = await this.run(client, command);
+        result = await this.run(command);
 
         return !!result?.success;
     }

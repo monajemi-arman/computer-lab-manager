@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getActivationScript } from "@/lib/systems-orchestrator/activate";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
@@ -17,10 +17,23 @@ export function ComputerActivateDialog({
     hostname: string
 }) {
     const [copied, setCopied] = useState(false);
+    const [toActivate, setToActivate] = useState(false);
+    const queryClient = useQueryClient();
     const { } = useQuery({
         queryKey: ['computer-activation-' + hostname],
         queryFn: async () => {
-            return await fetch("/api/operation/test/" + hostname);
+            if (toActivate) {
+                const result = await fetch("/api/operation/test/" + hostname);
+                if (result?.status === 200) {
+                    alert("Activation is successful!");
+                    return true;
+                }
+                else {
+                    alert("Activation failed!");
+                    return false;
+                }
+            }
+            return null;
         }
     })
 
@@ -43,9 +56,6 @@ export function ComputerActivateDialog({
         setTimeout(() => {
             setCopied(false)
         }, 2000)
-    }
-    const handleActivate = async () => {
-
     }
 
     return (
@@ -77,7 +87,10 @@ export function ComputerActivateDialog({
                     <Button onClick={handleDownloadScript} variant={"outline"}>
                         Download Script
                     </Button>
-                    <Button onClick={handleActivate}>
+                    <Button onClick={() => {
+                        setToActivate(true);
+                        queryClient.invalidateQueries({queryKey: ['computer-activation-' + hostname]});
+                    }}>
                         Activate
                     </Button>
                 </div>

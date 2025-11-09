@@ -16,6 +16,32 @@ services:
     networks:
       - app_net
 
+  ansible:
+    build: services/ansible-api
+    restart: always
+    environment:
+      SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY}
+      SSH_PUBLIC_KEY: ${SSH_PUBLIC_KEY}
+      ANSIBLE_API_SHARED_KEY: ${ANSIBLE_API_SHARED_KEY}
+    volumes:
+      - ./ansible-entrypoint.sh:/usr/local/bin/ansible-entrypoint.sh:ro
+    user: ansible
+    command: >
+      sh -c "
+        echo \"$$ANSIBLE_API_SHARED_KEY\" > /home/ansible/.shared_key && \
+        chmod 600 /home/ansible/.shared_key && \
+        chown ansible:ansible /home/ansible/.shared_key && \
+        mkdir -p /home/ansible/.ssh && \
+        chmod 700 /home/ansible/.ssh && \
+        echo \"$$SSH_PRIVATE_KEY\" > /home/ansible/.ssh/id_rsa && \
+        echo \"$$SSH_PUBLIC_KEY\" > /home/ansible/.ssh/id_rsa.pub && \
+        chmod 600 /home/ansible/.ssh/id_rsa && \
+        chmod 644 /home/ansible/.ssh/id_rsa.pub && \
+        chown ansible:ansible /home/ansible/.ssh/id_rsa && \
+        chown ansible:ansible /home/ansible/.ssh/id_rsa.pub && \
+        /usr/local/bin/ansible-entrypoint.sh
+      "
+
   nextjs:
     build: .
     restart: always

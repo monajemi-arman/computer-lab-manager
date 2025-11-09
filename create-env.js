@@ -134,6 +134,9 @@ async function main() {
   // Prompt for SSH_USER
   const SSH_USER = await prompt('SSH username for remote connections', defaultSshUser);
 
+  // Generate a random key for ANSIBLE_API_SHARED_KEY
+  const ANSIBLE_API_SHARED_KEY = forge.util.bytesToHex(forge.random.getBytesSync(32)); // 32 bytes = 256 bits
+
   try {
     console.log('Generating SSH private key using JavaScript...');
     // Generate an RSA key pair with 4096 bits
@@ -159,6 +162,7 @@ ${adminEntries}MONGO_HOST=${MONGO_HOST_DEV}  # Development
 MONGO_DB=${MONGO_DB}
 MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_DEV}:27017/${MONGO_DB}
 DEV_JWT_PRIVATE_KEY=${defaultDevJwtKey}
+ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
@@ -173,6 +177,7 @@ MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
 ${adminEntries}MONGO_HOST=${MONGO_HOST_PROD}  # Production
 MONGO_DB=${MONGO_DB}
 MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_PROD}:27017/${MONGO_DB}
+ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
@@ -185,6 +190,7 @@ MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
 ${adminEntries}MONGO_DB=${MONGO_DB}
+ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}

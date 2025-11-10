@@ -177,6 +177,12 @@ async function main() {
     fs.writeFileSync(publicKeyPath, publicKeyOpenSSH, { encoding: 'utf8', mode: 0o644 });
     console.log(`SSH public key written to: ${publicKeyPath}`);
 
+    // Define the path for the ansible-api .env file
+    const ansibleApiEnvPath = path.join(__dirname, 'services', 'ansible-api', '.env');
+    // Write ANSIBLE_API_SHARED_KEY to the ansible-api .env file
+    fs.writeFileSync(ansibleApiEnvPath, `ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}\n`, { encoding: 'utf8' });
+    console.log(`ANSIBLE_API_SHARED_KEY written to: ${ansibleApiEnvPath}`);
+
     // Compose file contents
     const envDevelopment = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}

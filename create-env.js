@@ -10,6 +10,9 @@
 let fs;
 let readline;
 let forge;
+let path; // Declare path variable
+let fileURLToPath; // Declare fileURLToPath variable
+let dirname; // Declare dirname variable
 
 const bcrypt = await import('bcryptjs');
 
@@ -83,6 +86,15 @@ async function main() {
   readline = rlModule.default || rlModule;
   const forgeModule = await import('node-forge'); // Dynamically import node-forge
   forge = forgeModule.default || forgeModule; // Assign forge
+  const pathModule = await import('path'); // Dynamically import path
+  path = pathModule.default || pathModule; // Assign path
+  const urlModule = await import('url'); // Dynamically import url
+  fileURLToPath = urlModule.fileURLToPath; // Assign fileURLToPath
+  dirname = path.dirname; // Assign dirname
+
+  // Define __dirname equivalent for ES modules
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
   console.log('This will create/overwrite: .env.development, .env.production, .env');
   const cont = (await prompt('Continue? (y/n)', 'y')).toLowerCase();
@@ -109,8 +121,8 @@ async function main() {
   const MONGO_APP_PASSWORD = await promptHidden('MONGO normal password', defaultAppPass);
 
   // Prompt for optional admin credentials (defaults empty)
-  const ADMIN_USERNAME = await prompt('Admin username for dashboard login', '');
-  const ADMIN_PASSWORD = await promptHidden('Admin password for dashboard login', '');
+  const ADMIN_USERNAME = await prompt('Admin username for dashboard login', 'admin');
+  const ADMIN_PASSWORD = await promptHidden('Admin password for dashboard login', 'admin');
 
   const passwordToHash = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -129,7 +141,7 @@ async function main() {
   const MONGO_HOST_PROD = defaultProdHost;
   const MONGO_DB = defaultDB;
 
-  let sshKeyEntry = ''; // Initialize sshKeyEntry
+  let sshKeyEntry = ''; // This variable will no longer be used for key content
 
   // Prompt for SSH_USER
   const SSH_USER = await prompt('SSH username for remote connections', defaultSshUser);
@@ -149,8 +161,21 @@ async function main() {
     const publicKeyOpenSSH = forge.ssh.publicKeyToOpenSSH(keypair.publicKey, 'generated-key');
     console.log('SSH public key generated successfully in OpenSSH format.');
 
-    // Wrap the multi-line key in double quotes for .env files
-    sshKeyEntry = `\n# SSH Private Key (auto-generated)\nSSH_PRIVATE_KEY="${privateKeyPem}"\n# SSH Public Key (auto-generated)\nSSH_PUBLIC_KEY="${publicKeyOpenSSH}"\n`;
+    // Define the path for the .ssh directory
+    const sshDirPath = path.join(__dirname, 'services', 'ansible-api', '.ssh');
+    console.log(`Ensuring directory exists: ${sshDirPath}`);
+    fs.mkdirSync(sshDirPath, { recursive: true });
+    console.log('Directory created/ensured.');
+
+    // Write private key to id_rsa with appropriate permissions
+    const privateKeyPath = path.join(sshDirPath, 'id_rsa');
+    fs.writeFileSync(privateKeyPath, privateKeyPem, { encoding: 'utf8', mode: 0o600 });
+    console.log(`SSH private key written to: ${privateKeyPath}`);
+
+    // Write public key to id_rsa.pub with appropriate permissions
+    const publicKeyPath = path.join(sshDirPath, 'id_rsa.pub');
+    fs.writeFileSync(publicKeyPath, publicKeyOpenSSH, { encoding: 'utf8', mode: 0o644 });
+    console.log(`SSH public key written to: ${publicKeyPath}`);
 
     // Compose file contents
     const envDevelopment = `# Modify username and password for security
@@ -166,8 +191,7 @@ ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
-SSH_USER=${SSH_USER}
-${sshKeyEntry}`; // Append SSH key entry
+SSH_USER=${SSH_USER}`; // Removed ${sshKeyEntry} as keys are now in files
 
     const envProduction = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
@@ -181,8 +205,7 @@ ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
-SSH_USER=${SSH_USER}
-${sshKeyEntry}`; // Append SSH key entry
+SSH_USER=${SSH_USER}`; // Removed ${sshKeyEntry} as keys are now in files
 
     const env = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
@@ -194,8 +217,7 @@ ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
-SSH_USER=${SSH_USER}
-${sshKeyEntry}`; // Append SSH key entry
+SSH_USER=${SSH_USER}`; // Removed ${sshKeyEntry} as keys are now in files
 
     fs.writeFileSync('.env.development', envDevelopment, { encoding: 'utf8' });
     fs.writeFileSync('.env.production', envProduction, { encoding: 'utf8' });

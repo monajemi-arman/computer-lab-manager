@@ -1,0 +1,26 @@
+---
+- name: Test connection and gather info
+  hosts: all
+  become: false
+  gather_facts: true
+
+  tasks:
+    - name: Print host info
+      debug:
+        msg: "Connected to {{ inventory_hostname }} as {{ ansible_user }}"
+
+    - name: Check disk usage
+      command: df -h /
+      register: disk_usage
+
+    - name: Show disk usage result
+      debug:
+        var: disk_usage.stdout_lines
+
+    - name: Check uptime
+      command: uptime
+      register: uptime_output
+
+    - name: Show uptime
+      debug:
+        var: uptime_output.stdout

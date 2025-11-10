@@ -20,6 +20,7 @@ services:
     build: services/ansible-api
     restart: always
     environment:
+      SSH_USER: ${SSH_USER}
       SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY}
       SSH_PUBLIC_KEY: ${SSH_PUBLIC_KEY}
       ANSIBLE_API_SHARED_KEY: ${ANSIBLE_API_SHARED_KEY}

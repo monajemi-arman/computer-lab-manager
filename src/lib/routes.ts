@@ -1,5 +1,5 @@
 const userRestrictedPaths: string[] = ['/dashboard'];
-const adminRestrictedPaths: string[] = [];
+const adminRestrictedPaths: string[] = ['/api/computer', '/api/playbook'];
 
 const userRestrictedPathsRegex = ["^/api/user/[^/]+$"]
     .map((x) => new RegExp(x));

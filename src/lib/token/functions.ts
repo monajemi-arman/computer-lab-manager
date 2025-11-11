@@ -17,3 +17,9 @@ export const userToToken = (user: IUser) => {
 export const verifyToken = (token: string) => {
   return !!jwt.verify(token, generateJwtPrivateKey.key);
 }
+
+export const ansibleAuthHeader = () => {
+  return {
+    "Authorization": "Bearer " + process.env.ANSIBLE_API_SHARED_KEY
+  }
+}

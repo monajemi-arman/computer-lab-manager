@@ -26,18 +26,23 @@ Managing our university's computer lab involves:
 - **Real-time Monitoring**: Prometheus and Grafana for system health and metrics
 - **Configuration Management**: Ansible playbooks for consistent system setup
 
-### Technical Architecture
-- **MongoDB with Mongoose**: User account storage and management
-- **PostgreSQL with Prisma**: Activity logging and audit trails
-- **Dual Database Strategy**: Using each database for its strengths - MongoDB for flexible user data, PostgreSQL for structured activity records
-
 ## 🚧 Current Status
 **Active Development** - Building core synchronization and monitoring features
 
 ## 📖 Usage
 
-* **Clone** this repository
-* Change **MongoDB password** in `.env` in project baseMongoDB password
+### Production
+* **Clone** this repository. Go to the directory.
+* Run `node create-env.js` to setup the environment.
+* Run `docker compose up` to start the app. Visit http://localhost
+
+### Development
+This is only if you want to work on the code and develop the project.  
+* **Clone** this repository. Go to the directory.
+* Run `node create-env.js` to setup the environment.
+* Run `docker compose up mongo` in project base if you don't have a MongoDB server.
+* Running `npm run dev` will start the app and its services.
+
 
 ## 🔮 Future Roadmap
 

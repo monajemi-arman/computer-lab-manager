@@ -1,8 +1,10 @@
 import { ComputerModel } from "@/models/computer";
 import { UserModel } from "@/models/user";
 import { IComputerRepository } from "@/repositories/computer-repository";
-import { MongooseComputerRepository } from "@/repositories/mongoose-computer-repository";
-import { MongooseUserRepository } from "@/repositories/mongoose-user-repository";
+import { MongooseComputerRepository } from "@/repositories/implementations/mongoose-computer-repository";
+import { MongooseUserRepository } from "@/repositories/implementations/mongoose-user-repository";
+import { PrismaPlaybookRepository } from "@/repositories/implementations/prisma-playbook-repository";
+import { IPlaybookRepository } from "@/repositories/playbook-repository";
 import { IUserRepository } from "@/repositories/user-repository";
 
 export class Container {
@@ -11,6 +13,7 @@ export class Container {
     constructor() {
         this.register<IUserRepository>("IUserRepository", new MongooseUserRepository(UserModel));
         this.register<IComputerRepository>("IComputerRepository", new MongooseComputerRepository(ComputerModel));
+        this.register<IPlaybookRepository>("IPlaybookRepository", new PrismaPlaybookRepository());
     }
 
     public register<T>(key: string, instance: T): void {

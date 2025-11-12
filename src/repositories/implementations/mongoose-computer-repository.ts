@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { IComputerRepository } from "./computer-repository";
+import { IComputerRepository } from "../computer-repository";
 import { IComputerDocument, IComputerInput } from "@/types/computer";
 
 export class MongooseComputerRepository implements IComputerRepository {

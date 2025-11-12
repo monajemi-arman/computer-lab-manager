@@ -41,6 +41,7 @@ This is only if you want to work on the code and develop the project.
 * **Clone** this repository. Go to the directory.
 * Run `node create-env.js` to setup the environment.
 * Run `docker compose up mongo` in project base if you don't have a MongoDB server.
+* Install project required node modules by running `npm install`.
 * Running `npm run dev` will start the app and its services.
 
 

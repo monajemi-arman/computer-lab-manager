@@ -31,5 +31,11 @@ export async function DELETE(
         headers: ansibleAuthHeader()
     });
 
-    return responseJson(!!response.ok);
+    if (!!!response.ok) return responseJson("failed to delete from ansible api", 500);
+    
+    const playbookRepository = container.resolve<IPlaybookRepository>("IPlaybookRepository");
+
+    await playbookRepository?.deleteByFilename(filename);
+    
+    return responseJson("success", 200);
 }

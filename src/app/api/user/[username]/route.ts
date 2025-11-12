@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { passwordToHash } from "@/lib/password/hash";
 import { responseJson, sanitizeUserOutput } from "@/lib/utils";
 import { updateUserSchema } from "@/lib/validation/userSchema";
-import { IUserRepository } from "@/repositories/userRepository";
+import { IUserRepository } from "@/repositories/user-repository";
 import { NextRequest } from "next/server";
 
 const userRepository = container.resolve<IUserRepository>("IUserRepository");

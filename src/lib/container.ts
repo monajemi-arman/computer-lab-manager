@@ -1,9 +1,9 @@
 import { ComputerModel } from "@/models/computer";
 import { UserModel } from "@/models/user";
-import { IComputerRepository } from "@/repositories/computerRepository";
-import { MongooseComputerRepository } from "@/repositories/mongooseComputerRepository";
-import { MongooseUserRepository } from "@/repositories/mongooseUserRepository";
-import { IUserRepository } from "@/repositories/userRepository";
+import { IComputerRepository } from "@/repositories/computer-repository";
+import { MongooseComputerRepository } from "@/repositories/mongoose-computer-repository";
+import { MongooseUserRepository } from "@/repositories/mongoose-user-repository";
+import { IUserRepository } from "@/repositories/user-repository";
 
 export class Container {
     private instances: Map<string, any> = new Map(); // eslint-disable-line

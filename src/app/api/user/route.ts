@@ -4,7 +4,7 @@ import { generateSshKeys } from "@/lib/systems-orchestrator/utils";
 import { passwordToHash } from "@/lib/password/hash";
 import { responseJson, sanitizeUserOutput } from "@/lib/utils";
 import { createUserSchema } from "@/lib/validation/userSchema";
-import { IUserRepository } from "@/repositories/userRepository";
+import { IUserRepository } from "@/repositories/user-repository";
 import { IUserInput } from "@/types/user";
 
 const userRepository = container.resolve<IUserRepository>("IUserRepository");

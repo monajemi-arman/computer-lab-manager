@@ -1,5 +1,5 @@
 import { container } from "@/lib/container";
-import { IUserRepository } from "@/repositories/userRepository";
+import { IUserRepository } from "@/repositories/user-repository";
 import { responseJson } from "@/lib/utils";
 import { LoginCredentials } from "@/types/user";
 import { loginCredentialsSchema } from "@/lib/validation/userSchema";

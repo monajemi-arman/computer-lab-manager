@@ -2,7 +2,7 @@ import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
 import { computerUsersToUsernames, responseJson } from "@/lib/utils";
 import { createComputerSchema } from "@/lib/validation/computerSchema";
-import { IComputerRepository } from "@/repositories/computerRepository";
+import { IComputerRepository } from "@/repositories/computer-repository";
 
 const computerRepository = container.resolve<IComputerRepository>("IComputerRepository");
 

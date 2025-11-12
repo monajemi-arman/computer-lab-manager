@@ -2,8 +2,8 @@ import { container } from "@/lib/container";
 import { connectToDatabase } from "@/lib/mongodb";
 import { computerUsersToUsernames, responseJson } from "@/lib/utils";
 import { updateComputerSchema } from "@/lib/validation/computerSchema";
-import { IComputerRepository } from "@/repositories/computerRepository";
-import { IUserRepository } from "@/repositories/userRepository";
+import { IComputerRepository } from "@/repositories/computer-repository";
+import { IUserRepository } from "@/repositories/user-repository";
 import { IComputerInput } from "@/types/computer";
 import { NextRequest } from "next/server";
 

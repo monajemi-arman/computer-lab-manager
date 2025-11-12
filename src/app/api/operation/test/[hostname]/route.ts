@@ -1,6 +1,6 @@
 import { Operation } from '@/lib/systems-orchestrator/operation';
 import { container } from '@/lib/container';
-import { IComputerRepository } from '@/repositories/computerRepository';
+import { IComputerRepository } from '@/repositories/computer-repository';
 import { getIsAdmin } from '@/app/actions';
 import { responseJson } from '@/lib/utils';
 import { NextRequest } from 'next/server';

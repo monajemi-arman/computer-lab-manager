@@ -1,7 +1,7 @@
 import { Client } from 'ssh2';
 import { connectToDatabase } from '../mongodb';
 import { container } from '../container';
-import { IComputerRepository } from '@/repositories/computerRepository';
+import { IComputerRepository } from '@/repositories/computer-repository';
 import { waitFor } from '../utils';
 import { CommandResult, CommandStatus } from './command';
 

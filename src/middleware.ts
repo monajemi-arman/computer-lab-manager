@@ -5,5 +5,5 @@ const middlewares = [restrictPaths];
 export default stackMiddlewares(middlewares);
 
 export const config = {
-  matcher: [ '/api/user' , '/dashboard' ],
+  matcher: [ '/api/user' , '/dashboard', '/api/computer', '/api/playbook' ],
 }

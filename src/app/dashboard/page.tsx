@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useHash } from "@/hooks/use-hash";
 import { getIsAdmin } from "../actions";
 import AdminComputersView from "./admin/computers/view";
+import AdminSoftwareManagementView from "./admin/software-management/view";
 
 export default function Page() {
   // States
@@ -43,6 +44,7 @@ export default function Page() {
         <DefaultDashboardView />
         {hash == '#admin-users' && <AdminUsersView />}
         {hash == '#admin-computers' && <AdminComputersView />}
+        {hash == '#admin-software-management' && <AdminSoftwareManagementView />}
       </SidebarInset>
     </SidebarProvider>
   )

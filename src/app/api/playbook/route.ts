@@ -2,7 +2,7 @@ import { container } from "@/lib/container";
 import { ansibleAuthHeader } from "@/lib/token/functions";
 import { IPlaybookRepository } from "@/repositories/playbook-repository";
 import { responseJson } from "@/lib/utils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createPlaybookSchema } from "@/lib/validation/playbook";
 
 const ANSIBLE_API = process.env.ANSIBLE_API ?? 'http://localhost:8000/api';

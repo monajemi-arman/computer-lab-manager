@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { IUserRepository } from "./user-repository";
+import { IUserRepository } from "../user-repository";
 import { IUserDocument, IUserInput } from "@/types/user";
 
 export class MongooseUserRepository implements IUserRepository {

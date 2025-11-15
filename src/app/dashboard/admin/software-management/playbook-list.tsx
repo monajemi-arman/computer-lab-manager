@@ -8,6 +8,7 @@ import { PlaybookDeleteAlert } from "./playbook-delete-alert"
 import { Input } from "@/components/ui/input"
 import { PlaybookAddDialog } from "./playbook-add-dialog"
 import ChooseComputerDialog from "./choose-computer-dialog"
+import { Playbook } from "@/types/playbook"
 
 export const PlaybookList = () => {
     const [playbook, setPlaybook] = useState<Playbook>();

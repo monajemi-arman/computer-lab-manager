@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prismaClient";
+import { Playbook, Task } from "@/types/playbook";
 
 export class PrismaPlaybookRepository {
     async create(playbook: Playbook) {

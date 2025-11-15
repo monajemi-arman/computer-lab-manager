@@ -1,3 +1,5 @@
+import { Playbook } from "@/types/playbook"
+
 export interface IPlaybookRepository {
     create(playbook: Playbook): Promise<Playbook>
     findAll(): Promise<Playbook[]>

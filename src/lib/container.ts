@@ -4,7 +4,9 @@ import { IComputerRepository } from "@/repositories/computer-repository";
 import { MongooseComputerRepository } from "@/repositories/implementations/mongoose-computer-repository";
 import { MongooseUserRepository } from "@/repositories/implementations/mongoose-user-repository";
 import { PrismaPlaybookRepository } from "@/repositories/implementations/prisma-playbook-repository";
+import { PrismaTaskRepository } from "@/repositories/implementations/prisma-task-repository";
 import { IPlaybookRepository } from "@/repositories/playbook-repository";
+import { ITaskRepository } from "@/repositories/task-repository";
 import { IUserRepository } from "@/repositories/user-repository";
 
 export class Container {
@@ -14,6 +16,7 @@ export class Container {
         this.register<IUserRepository>("IUserRepository", new MongooseUserRepository(UserModel));
         this.register<IComputerRepository>("IComputerRepository", new MongooseComputerRepository(ComputerModel));
         this.register<IPlaybookRepository>("IPlaybookRepository", new PrismaPlaybookRepository());
+        this.register<ITaskRepository>("ITaskRepository", new PrismaTaskRepository());
     }
 
     public register<T>(key: string, instance: T): void {

@@ -10,9 +10,21 @@ datasource db {
   url      = "file:./db.db"
 }
 
+model Task {
+  id String @id
+  status TaskStatus
+  playbookId Int
+  playbook Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+}
+enum TaskStatus {
+  RUNNING
+  ENDED
+}
+
 model Playbook {
-  id  Int @id @default(autoincrement())
-  name  String
-  filename  String
+  id Int @id @default(autoincrement())
+  name String
+  filename String
   description String 
+  tasks Task[]
 }

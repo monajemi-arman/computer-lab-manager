@@ -38,12 +38,6 @@ export async function POST(req: NextRequest) {
     const newFormData = new FormData();
     newFormData.append('file', new Blob([file.data]), file.name);
 
-    console.log(JSON.stringify([ANSIBLE_API + '/playbooks/', {
-            method: 'POST',
-            body: newFormData,
-            headers: ansibleAuthHeader(),
-        }]));
-    
     let response;
     try {
         response = await fetch(ANSIBLE_API + '/playbooks/', {

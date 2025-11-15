@@ -1,16 +1,17 @@
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { CirclePlus, Loader } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { PlaybookDeleteAlert } from "./playbook-delete-alert"
 import { Input } from "@/components/ui/input"
 import { PlaybookAddDialog } from "./playbook-add-dialog"
+import ChooseComputerDialog from "./choose-computer-dialog"
 
 export const PlaybookList = () => {
-    const queryClient = useQueryClient();
-    const [isVisibleChooseComputersDialog, setVisibleChooseComputersDialog] = useState(false);
+    const [playbook, setPlaybook] = useState<Playbook>();
+    const [isChooseComputersDialog, setChooseComputersDialog] = useState(false);
     const [isDeleteAlertOpen, setDeleteAlertOpen] = useState(false);
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [filename, setFilename] = useState<string>();
@@ -20,14 +21,6 @@ export const PlaybookList = () => {
         queryKey: ["playbooks"],
         queryFn: async () => {
             const res = await fetch("/api/playbook");
-            if (!res.ok) throw new Error(`Failed to fetch computers: ${res.status} ${res.statusText}`);
-            return await res.json();
-        }
-    });
-    const { data: computers, isLoading: isComputersLoading } = useQuery({
-        queryKey: ["computers"],
-        queryFn: async () => {
-            const res = await fetch("/api/computer");
             if (!res.ok) throw new Error(`Failed to fetch computers: ${res.status} ${res.statusText}`);
             return await res.json();
         }
@@ -45,7 +38,7 @@ export const PlaybookList = () => {
     const filteredPlaybooks = playbooks.filter((playbook: Playbook) => {
         if (!search || search.length === 0) return true;
         return playbook.name.toLowerCase().startsWith(search);
-        });
+    });
 
     return (
         <>
@@ -88,7 +81,10 @@ export const PlaybookList = () => {
                             </CardContent>
                             <CardFooter>
                                 <div className="flex items-center gap-2">
-                                    <Button onClick={() => setVisibleChooseComputersDialog(true)}>Run</Button>
+                                    <Button onClick={() => {
+                                        setPlaybook(playbook);
+                                        setChooseComputersDialog(true);
+                                    }}>Run</Button>
                                     <Button onClick={() => {
                                         setFilename(playbook.filename);
                                         setDeleteAlertOpen(true);
@@ -99,6 +95,9 @@ export const PlaybookList = () => {
                     ))}
                 <PlaybookAddDialog open={isAddOpen} onOpenChange={setIsAddOpen} />
                 <PlaybookDeleteAlert open={isDeleteAlertOpen} onOpenChange={setDeleteAlertOpen} filename={filename} />
+                {playbook &&
+                    <ChooseComputerDialog open={isChooseComputersDialog} onOpenChange={setChooseComputersDialog} playbook={playbook} />
+                }
             </div>
         </>
     )

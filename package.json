@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:nextJs\" \"npm run dev:ansibleApi\"",
     "dev:nextJs": "next dev --turbopack",
-    "dev:ansibleApi": "services/ansible-api/venv/bin/python services/ansible-api/run.py",
+    "dev:ansibleApi": "python3 services/ansible-api/run.py",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",

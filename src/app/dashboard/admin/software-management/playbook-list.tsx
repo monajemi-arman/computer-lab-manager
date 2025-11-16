@@ -9,10 +9,12 @@ import { Input } from "@/components/ui/input"
 import { PlaybookAddDialog } from "./playbook-add-dialog"
 import ChooseComputerDialog from "./choose-computer-dialog"
 import { Playbook } from "@/types/playbook"
+import ShowTaskDialog from "./show-task-dialog"
 
 export const PlaybookList = () => {
     const [playbook, setPlaybook] = useState<Playbook>();
     const [isChooseComputersDialog, setChooseComputersDialog] = useState(false);
+    const [isShowTaskId, setShowTaskId] = useState<string | null>(null);
     const [isDeleteAlertOpen, setDeleteAlertOpen] = useState(false);
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [filename, setFilename] = useState<string>();
@@ -97,7 +99,13 @@ export const PlaybookList = () => {
                 <PlaybookAddDialog open={isAddOpen} onOpenChange={setIsAddOpen} />
                 <PlaybookDeleteAlert open={isDeleteAlertOpen} onOpenChange={setDeleteAlertOpen} filename={filename} />
                 {playbook &&
-                    <ChooseComputerDialog open={isChooseComputersDialog} onOpenChange={setChooseComputersDialog} playbook={playbook} />
+                    <ChooseComputerDialog open={isChooseComputersDialog} onOpenChange={setChooseComputersDialog}
+                        playbook={playbook} setShowTaskId={setShowTaskId} />
+                }
+                {isShowTaskId &&
+                    <ShowTaskDialog open={!!isShowTaskId} taskId={isShowTaskId}
+                        onOpenChange={(x: boolean) => { setShowTaskId(x ? isShowTaskId : null) }}
+                    />
                 }
             </div>
         </>

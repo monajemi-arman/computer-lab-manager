@@ -68,5 +68,5 @@ export async function POST(req: NextRequest) {
     if (!taskRepository) return responseJson('failed task repository', 500);
 
     const taskAdded = await taskRepository.create(task);
-    if (taskAdded) return responseJson("success", 200);
+    if (taskAdded) return responseJson(taskAdded.id, 200);
 }

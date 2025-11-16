@@ -19,10 +19,12 @@ export default function ChooseComputerDialog({
   open,
   onOpenChange,
   playbook,
+  setShowTaskId
 }: {
   open: boolean,
   onOpenChange: (open: boolean) => void,
-  playbook: Playbook
+  playbook: Playbook,
+  setShowTaskId: (taskId: string) => void
 }) {
   const [selected, setSelected] = useState<IComputer[]>([]);
   const [search, setSearch] = useState("");
@@ -67,13 +69,13 @@ export default function ChooseComputerDialog({
       });
       if (!response.ok) {
         const text = await response.text().catch(() => '');
-        throw new Error(`Failed to save computer: ${response.status} ${text}`);
+        throw new Error(`Failed to run playbook: ${response.status} ${text}`);
       }
       return await response.json();
     },
-    onSuccess: () => {
-     alert("Job started... Click on logs for more info!");
-     setSelected([]);
+    onSuccess: (data) => {
+      setShowTaskId(data);
+      setSelected([]);
     }
   })
 

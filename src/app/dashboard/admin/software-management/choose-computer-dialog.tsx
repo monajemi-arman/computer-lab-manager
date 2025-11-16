@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader, Plus, Trash } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IComputer } from "@/types/computer";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Playbook } from "@/types/playbook";
@@ -26,6 +26,7 @@ export default function ChooseComputerDialog({
   playbook: Playbook,
   setShowTaskId: (taskId: string) => void
 }) {
+  const queryClient = useQueryClient();
   const [selected, setSelected] = useState<IComputer[]>([]);
   const [search, setSearch] = useState("");
 
@@ -74,6 +75,7 @@ export default function ChooseComputerDialog({
       return await response.json();
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({queryKey: ['playbooks']});
       setShowTaskId(data);
       setSelected([]);
     }

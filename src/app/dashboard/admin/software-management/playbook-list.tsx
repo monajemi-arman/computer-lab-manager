@@ -10,10 +10,12 @@ import { PlaybookAddDialog } from "./playbook-add-dialog"
 import ChooseComputerDialog from "./choose-computer-dialog"
 import { Playbook } from "@/types/playbook"
 import ShowTaskDialog from "./show-task-dialog"
+import { ChooseTasksDialog } from "./choose-tasks-dialog"
 
 export const PlaybookList = () => {
     const [playbook, setPlaybook] = useState<Playbook>();
     const [isChooseComputersDialog, setChooseComputersDialog] = useState(false);
+    const [isChooseLogs, setChooseLogs] = useState(false);
     const [isShowTaskId, setShowTaskId] = useState<string | null>(null);
     const [isDeleteAlertOpen, setDeleteAlertOpen] = useState(false);
     const [isAddOpen, setIsAddOpen] = useState(false);
@@ -75,7 +77,7 @@ export const PlaybookList = () => {
             <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredPlaybooks && filteredPlaybooks
                     .map((playbook: Playbook) => (
-                        <Card key={playbook.name} className="w-1/2 cursor-pointer hover:bg-gray-50 transition-colors">
+                        <Card key={playbook.name} className="w-6/10 cursor-pointer hover:bg-gray-50 transition-colors">
                             <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
                                     <h3 className="font-medium truncate">{playbook.name}</h3>
@@ -83,7 +85,11 @@ export const PlaybookList = () => {
                                 <p className="text-sm text-gray-600 mt-2 line-clamp-2">{playbook.description}</p>
                             </CardContent>
                             <CardFooter>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
+                                    <Button variant='outline' onClick={() => {
+                                        setPlaybook(playbook);
+                                        setChooseLogs(true);
+                                    }}>Logs</Button>
                                     <Button onClick={() => {
                                         setPlaybook(playbook);
                                         setChooseComputersDialog(true);
@@ -106,6 +112,9 @@ export const PlaybookList = () => {
                     <ShowTaskDialog open={!!isShowTaskId} taskId={isShowTaskId}
                         onOpenChange={(x: boolean) => { setShowTaskId(x ? isShowTaskId : null) }}
                     />
+                }
+                {isChooseLogs && playbook &&
+                    <ChooseTasksDialog open={isChooseLogs} onOpenChange={setChooseLogs} playbook={playbook} setShowTaskId={setShowTaskId} />
                 }
             </div>
         </>

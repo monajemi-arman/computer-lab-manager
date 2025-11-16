@@ -41,9 +41,7 @@ def run_ansible_job_sync(task_id: str, playbook: str, hosts: dict):
                 log_line = event["event_data"]["res"]["stdout"]
 
             if log_line:
-                loop.call_soon_threadsafe(
-                    lambda: loop.create_task(_handle_event(task_id, log_line))
-                )
+                asyncio.run_coroutine_threadsafe(_handle_event(task_id, log_line), loop)
 
         inventory = {"all": {"hosts": hosts}}
 

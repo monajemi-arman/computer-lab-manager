@@ -1,7 +1,7 @@
-import { Playbook } from "@/types/playbook"
+import { Playbook } from "@prisma/client"
 
 export interface IPlaybookRepository {
-    create(playbook: Playbook): Promise<Playbook>
+    create(playbook: PlaybookCreateInput): Promise<Playbook>
     findAll(): Promise<Playbook[]>
     findByFilename(filename: string): Promise<Playbook | null>
     deleteByFilename(filename: string): Promise<boolean>

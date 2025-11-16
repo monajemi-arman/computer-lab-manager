@@ -13,7 +13,7 @@ import { Loader, Plus, Trash } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IComputer } from "@/types/computer";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Playbook } from "@/types/playbook";
+import { Playbook } from "@prisma/client"
 
 export default function ChooseComputerDialog({
   open,

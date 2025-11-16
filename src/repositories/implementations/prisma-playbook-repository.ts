@@ -1,8 +1,7 @@
 import { prisma } from "@/lib/prismaClient";
-import { Playbook, Task } from "@/types/playbook";
 
 export class PrismaPlaybookRepository {
-    async create(playbook: Playbook) {
+    async create(playbook: PlaybookCreateInput) {
         return await prisma.playbook.create({ data: playbook });
     }
     async findAll() {

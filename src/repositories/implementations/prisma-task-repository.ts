@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prismaClient";
-import { Task } from "@/types/playbook";
-import { TaskStatus } from "@prisma/client";
+import { TaskStatus, Task } from "@prisma/client";
 
 export class PrismaTaskRepository {
-    async create(task: Task) {
+    async create(task: TaskCreateInput) {
         return await prisma.task.create({ data: task });
     }
     async findPlaybookTasks(playbookId: number) {

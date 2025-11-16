@@ -8,7 +8,7 @@ import { PlaybookDeleteAlert } from "./playbook-delete-alert"
 import { Input } from "@/components/ui/input"
 import { PlaybookAddDialog } from "./playbook-add-dialog"
 import ChooseComputerDialog from "./choose-computer-dialog"
-import { Playbook } from "@/types/playbook"
+import { Playbook } from "@prisma/client"
 import ShowTaskDialog from "./show-task-dialog"
 import { ChooseTasksDialog } from "./choose-tasks-dialog"
 

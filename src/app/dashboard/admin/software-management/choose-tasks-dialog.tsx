@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Playbook, Task } from "@/types/playbook";
+import { Playbook, Task } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query";
 import { Eye } from "lucide-react";
 

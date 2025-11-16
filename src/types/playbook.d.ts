@@ -1,13 +1,10 @@
-import { TaskStatus } from "@prisma/client"
-
-interface Playbook {
-    id?: number
-    name: string
+interface PlaybookCreateInput {
+    name: string,
+    description: string,
     filename: string
-    description: string
 }
 
-interface Task {
+interface TaskCreateInput {
     id: string,
     status: TaskStatus,
     playbookId: number

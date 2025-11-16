@@ -12,8 +12,7 @@ import { ansibleAuthHeader } from "@/lib/token/functions";
 import { responseJson } from "@/lib/utils";
 import { IPlaybookRepository } from "@/repositories/playbook-repository";
 import { ITaskRepository } from "@/repositories/task-repository";
-import { Task } from "@/types/playbook";
-import { TaskStatus } from "@prisma/client";
+import { TaskStatus, Task } from "@prisma/client";
 import { NextRequest } from "next/server";
 import z from "zod";
 
@@ -58,7 +57,7 @@ export async function POST(req: NextRequest) {
     const playbook = await playbookRepository.findByFilename(filename);
     if (!playbook || !playbook.id) return responseJson("playbook not found", 404);
 
-    const task: Task = {
+    const task = {
         id: result.task_id,
         status: TaskStatus.RUNNING,
         playbookId: playbook.id

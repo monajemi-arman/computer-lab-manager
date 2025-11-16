@@ -63,14 +63,14 @@ def run_ansible_job_sync(task_id: str, playbook: str, hosts: dict):
             update_job_status(session, job, r.status)
 
             status_msg = f"[DONE] Status: {r.status}, RC: {rc}" + "\n"
-            append_job_log(session, job, prettify_ansible_output(status_msg) + "\n")
-            await broadcast_log(job.id, prettify_ansible_output(status_msg) + "\n")
+            append_job_log(session, job, prettify_ansible_output(status_msg))
+            await broadcast_log(job.id, prettify_ansible_output(status_msg))
 
             if r.stdout:
                 for line in r.stdout.read().splitlines():
                     if line.strip():
                         append_job_log(session, job, prettify_ansible_output(line) + "\n")
-                        await broadcast_log(job.id, prettify_ansible_output(line) + "\n")
+                        await broadcast_log(job.id, prettify_ansible_output(line))
 
             if r.stderr:
                 for line in r.stderr.read().splitlines():

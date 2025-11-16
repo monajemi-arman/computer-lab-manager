@@ -23,31 +23,25 @@ export default function ShowTaskDialog({
         }
     }, [messages]);
 
-    // Open WebSocket when dialog opens
+    // WS in api gives event source here
     useEffect(() => {
         if (!open) return;
 
-        wsRef.current = new WebSocket("ws://localhost:8000/ws/" + taskId);
+        const evtSource = new EventSource(`/api/playbook/task/stream/${taskId}`);
 
-        wsRef.current.onmessage = (event) => {
-            setMessages((prev) => prev + event.data + "");
+        evtSource.onmessage = (event) => {
+            setMessages((prev) => prev + event.data + "\n");
         };
 
-        wsRef.current.onerror = () => {
-            setMessages((prev) => prev + "\n[WebSocket error]");
-        };
-
-        wsRef.current.onclose = () => {
-            setMessages((prev) => prev + "\n[WebSocket closed]");
+        evtSource.onerror = () => {
+            setMessages((prev) => prev + "[SSE error]\n");
+            evtSource.close();
         };
 
         return () => {
-            if (wsRef.current) {
-                wsRef.current.close();
-                wsRef.current = null;
-            }
+            evtSource.close();
         };
-    }, [open]);
+    }, [open, taskId]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

@@ -16,7 +16,7 @@ import { TaskStatus, Task } from "@prisma/client";
 import { NextRequest } from "next/server";
 import z from "zod";
 
-const ANSIBLE_API = process.env.ANSIBLE_API ?? 'http://localhost:8000/api';
+const ANSIBLE_API = process.env.ANSIBLE_API ?? 'http://localhost:8000';
 
 const DtoSchema = z.object({
     filename: z.string(),

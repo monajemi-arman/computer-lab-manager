@@ -18,7 +18,7 @@ export function ChooseTasksDialog(
   const { data: tasks, isPending } = useQuery({
     queryKey: [playbook.name + '-tasks'],
     queryFn: async () => {
-      const response = await fetch('/api/playbook/tasks/' + playbook.filename, { credentials: "same-origin" });
+      const response = await fetch('/api/playbook/task/' + playbook.filename, { credentials: "same-origin" });
       return await response.json();
     }
   })

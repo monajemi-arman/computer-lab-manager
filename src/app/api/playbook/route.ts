@@ -5,7 +5,7 @@ import { responseJson } from "@/lib/utils";
 import { NextRequest } from "next/server";
 import { createPlaybookSchema } from "@/lib/validation/playbook";
 
-const ANSIBLE_API = process.env.ANSIBLE_API ?? 'http://localhost:8000/api';
+const ANSIBLE_API = process.env.ANSIBLE_API ?? 'http://localhost:8000';
 
 export const GET = async () => {
     const response = await fetch(ANSIBLE_API + '/playbooks', { headers: ansibleAuthHeader() });

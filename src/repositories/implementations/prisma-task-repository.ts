@@ -7,7 +7,8 @@ export class PrismaTaskRepository {
     }
     async findPlaybookTasks(playbookId: number) {
         return await prisma.task.findMany({
-            where: { playbookId }
+            where: { playbookId },
+            orderBy: { createdAt: 'desc' }
         });
     }
     async findById(id: string) {

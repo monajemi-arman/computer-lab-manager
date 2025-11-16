@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { parseDate } from "@/lib/utils";
 import { Playbook, Task } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query";
 import { Eye } from "lucide-react";
@@ -34,15 +35,14 @@ export function ChooseTasksDialog(
         </div>
 
         <div className="space-y-2 max-h-80 overflow-auto">
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {!isPending && tasks && tasks.map((task: Task) => (
               <Card
                 key={task.id}
                 className="flex items-center justify-between px-1 py-2 text-sm"
               >
-                {task.id}
+                {parseDate(task.createdAt)}
                 <Button
-                  variant="ghost"
                   onClick={() => setShowTaskId(task.id)}
                 >
                   <Eye /> Show

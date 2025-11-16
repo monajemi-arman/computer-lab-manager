@@ -102,21 +102,21 @@ export const PlaybookList = () => {
                             </CardFooter>
                         </Card>
                     ))}
-                <PlaybookAddDialog open={isAddOpen} onOpenChange={setIsAddOpen} />
-                <PlaybookDeleteAlert open={isDeleteAlertOpen} onOpenChange={setDeleteAlertOpen} filename={filename} />
-                {playbook &&
-                    <ChooseComputerDialog open={isChooseComputersDialog} onOpenChange={setChooseComputersDialog}
-                        playbook={playbook} setShowTaskId={setShowTaskId} />
-                }
-                {isShowTaskId &&
-                    <ShowTaskDialog open={!!isShowTaskId} taskId={isShowTaskId}
-                        onOpenChange={(x: boolean) => { setShowTaskId(x ? isShowTaskId : null) }}
-                    />
-                }
-                {isChooseLogs && playbook &&
-                    <ChooseTasksDialog open={isChooseLogs} onOpenChange={setChooseLogs} playbook={playbook} setShowTaskId={setShowTaskId} />
-                }
             </div>
+            <PlaybookAddDialog open={isAddOpen} onOpenChange={setIsAddOpen} />
+            <PlaybookDeleteAlert open={isDeleteAlertOpen} onOpenChange={setDeleteAlertOpen} filename={filename} />
+            {playbook &&
+                <ChooseComputerDialog open={isChooseComputersDialog} onOpenChange={setChooseComputersDialog}
+                    playbook={playbook} setShowTaskId={setShowTaskId} />
+            }
+            {isShowTaskId &&
+                <ShowTaskDialog open={!!isShowTaskId} taskId={isShowTaskId}
+                    onOpenChange={(x: boolean) => { setShowTaskId(x ? isShowTaskId : null) }}
+                />
+            }
+            {isChooseLogs && playbook &&
+                <ChooseTasksDialog open={isChooseLogs} onOpenChange={setChooseLogs} playbook={playbook} setShowTaskId={setShowTaskId} />
+            }
         </>
     )
 }

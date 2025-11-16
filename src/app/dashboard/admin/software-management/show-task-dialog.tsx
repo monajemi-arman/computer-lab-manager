@@ -49,9 +49,9 @@ export default function ShowTaskDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="!max-w-3/5 w-[90vw]">
                 <DialogHeader>
-                    <DialogTitle>Job Output for task: {taskId}</DialogTitle>
+                    <DialogTitle>Output of task with ID: <p className="text-sm">{taskId}</p></DialogTitle>
                 </DialogHeader>
 
                 <div

@@ -16,7 +16,7 @@ async def broadcast_log(task_id: str, message: str):
         if ws.client_state.name != "CONNECTED":
             continue
         try:
-            await ws.send_text(message)
+            await ws.send_text(message + '\n')
             still_alive.append(ws)
         except Exception:
             pass  # Ignore dropped client
@@ -31,7 +31,7 @@ async def handle_websocket(websocket: WebSocket, task_id: str, log_history: str)
     # Send backlog logs immediately
     if log_history:
         for line in log_history.splitlines():
-            await websocket.send_text(line)
+            await websocket.send_text(line + '\n')
 
     try:
         while True:

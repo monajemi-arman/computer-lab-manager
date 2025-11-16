@@ -4,6 +4,7 @@ import logging
 from .crud import get_job, update_job_status, update_job_result, append_job_log
 from .database import get_session
 from .websockets import broadcast_log
+from .utils import prettify_ansible_output
 
 # === ENABLE ANSIBLE LOGGING ===
 logging.getLogger("ansible_runner").setLevel(logging.DEBUG)
@@ -61,21 +62,21 @@ def run_ansible_job_sync(task_id: str, playbook: str, hosts: dict):
             update_job_result(session, job, rc, r.stats)
             update_job_status(session, job, r.status)
 
-            status_msg = f"[DONE] Status: {r.status}, RC: {rc}"
-            append_job_log(session, job, status_msg)
-            await broadcast_log(job.id, status_msg)
+            status_msg = f"[DONE] Status: {r.status}, RC: {rc}" + "\n"
+            append_job_log(session, job, prettify_ansible_output(status_msg) + "\n")
+            await broadcast_log(job.id, prettify_ansible_output(status_msg) + "\n")
 
             if r.stdout:
                 for line in r.stdout.read().splitlines():
                     if line.strip():
-                        append_job_log(session, job, line)
-                        await broadcast_log(job.id, line)
+                        append_job_log(session, job, prettify_ansible_output(line) + "\n")
+                        await broadcast_log(job.id, prettify_ansible_output(line) + "\n")
 
             if r.stderr:
                 for line in r.stderr.read().splitlines():
                     if line.strip():
-                        append_job_log(session, job, f"ERROR: {line}")
-                        await broadcast_log(job.id, f"ERROR: {line}")
+                        append_job_log(session, job, f"ERROR: {line}" + "\n")
+                        await broadcast_log(job.id, f"ERROR: {line}" + "\n")
 
         finally:
             session.close()

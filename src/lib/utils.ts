@@ -1,7 +1,8 @@
 import { IComputer, IComputerDocument as HydratedDocument } from "@/types/computer";
 import { IUser, IUserDocument, IUserInput } from "@/types/user";
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { format } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -80,3 +81,5 @@ export const computerUsersToUsernames = (computer: IComputer | HydratedDocument)
   }
   return computer;
 }
+
+export const parseDate = (date: Date) => format(date, "yyyy-MM-dd HH:mm");

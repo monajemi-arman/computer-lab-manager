@@ -112,21 +112,6 @@ const data = {
       ]
     },
     {
-      title: "Monitoring",
-      url: "#admin-monitoring",
-      icon: Activity,
-      items: [
-        {
-          title: "Systems Load & Uptime",
-          url: "#admin-monitoring-systems",
-        },
-        {
-          title: "Storage Statistics",
-          url: "#admin-storage-statistics",
-        }
-      ]
-    },
-    {
       title: "System Administration",
       url: "#admin-system",
       icon: ServerCog,
@@ -144,12 +129,27 @@ const data = {
         }
       ],
     },
+    {
+      title: "Monitoring",
+      url: "#admin-monitoring",
+      icon: Activity,
+      items: [
+        {
+          title: "Systems Load & Uptime",
+          url: "#admin-monitoring-systems",
+        },
+        {
+          title: "Storage Statistics",
+          url: "#admin-storage-statistics",
+        }
+      ]
+    },
   ],
   projects: [],
 }
 
 export function AppSidebar({ isAdmin = false, ...props }: AppSidebarProps) {
-  const navigationItems = isAdmin 
+  const navigationItems = isAdmin
     ? [...data.adminNavMain, ...data.navMain]
     : data.navMain;
 

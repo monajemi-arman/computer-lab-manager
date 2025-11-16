@@ -35,8 +35,8 @@ async def verify_shared_key(credentials: HTTPAuthorizationCredentials = Security
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-app = FastAPI(title="Ansible Runner API", lifespan=lifespan, dependencies=[Depends(verify_shared_key)])
+app = FastAPI(title="Ansible Runner API", lifespan=lifespan)
 
-app.include_router(jobs.router)
+app.include_router(jobs.router, dependencies=[Depends(verify_shared_key)])
+app.include_router(playbooks.router, dependencies=[Depends(verify_shared_key)])
 app.include_router(ws.router)
-app.include_router(playbooks.router)

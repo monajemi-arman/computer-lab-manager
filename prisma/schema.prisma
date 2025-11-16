@@ -15,6 +15,7 @@ model Task {
   status TaskStatus
   playbookId Int
   playbook Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 enum TaskStatus {
   RUNNING

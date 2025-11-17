@@ -36,7 +36,7 @@ export function ChooseTasksDialog(
 
         <div className="space-y-2 max-h-80 overflow-auto">
           <div className="grid grid-cols-3 gap-2">
-            {!isPending && tasks && tasks.map((task: Task) => (
+            {(!isPending && tasks) ? tasks.map((task: Task) => (
               <Card
                 key={task.id}
                 className="flex items-center justify-between px-1 py-2 text-sm"
@@ -48,7 +48,7 @@ export function ChooseTasksDialog(
                   <Eye /> Show
                 </Button>
               </Card>
-            ))}
+            )) : "Loading..."}
           </div>
         </div>
       </DialogContent>

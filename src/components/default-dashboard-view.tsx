@@ -89,11 +89,11 @@ export default function DefaultDashboardView() {
 				</section>
 
 				<section className={styles.features}>
-					<h3>Core features</h3>
+					<h3><strong>&#10133;{' '} Core features</strong></h3>
 					<ul>
-						<li>Centralized user management and synchronization</li>
-						<li>Automated system updates and remote access tools</li>
-						<li>Monitoring integrations (Prometheus / Grafana) and IaC tooling</li>
+						<li>&#9989;{' '} Centralized <strong>user management</strong> and synchronization</li>
+						<li>&#9989;{' '} Automated system updates and <strong>remote access tools</strong></li>
+						<li>&#9989;{' '} <strong>Monitoring</strong> integrations (Prometheus / Grafana) and IaC tooling</li>
 					</ul>
 				</section>
 			</main>

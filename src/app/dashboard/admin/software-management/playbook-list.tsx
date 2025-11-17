@@ -74,10 +74,10 @@ export const PlaybookList = () => {
                     />
                 </div>
             </div>
-            <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredPlaybooks && filteredPlaybooks
                     .map((playbook: Playbook) => (
-                        <Card key={playbook.name} className="w-6/10 cursor-pointer hover:bg-gray-50 transition-colors">
+                        <Card key={playbook.name} className="!size-auto cursor-pointer hover:bg-gray-50 transition-colors">
                             <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
                                     <h3 className="font-medium truncate">{playbook.name}</h3>

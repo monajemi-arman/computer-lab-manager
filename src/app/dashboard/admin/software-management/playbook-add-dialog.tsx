@@ -95,7 +95,14 @@ export function PlaybookAddDialog({
 
             <div className="grid gap-2">
               <Label htmlFor="file">YAML File (.yaml / .yml)</Label>
-              <Input id="file" name="file" type="file" accept=".yaml,.yml" required />
+              <Input id="file" name="file" type="file" accept=".yaml,.yml" required
+                className="text-sm text-stone-500
+                  file:mr-5 file:py-1 file:px-3 file:border-[1px]
+                  file:text-xs file:font-medium
+                 file:bg-stone-50 file:text-stone-700
+                  hover:file:cursor-pointer hover:file:bg-blue-50
+                hover:file:text-blue-700"
+              />
             </div>
           </div>
 

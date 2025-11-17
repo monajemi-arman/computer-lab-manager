@@ -5,7 +5,8 @@ async function main() {
 
     await prisma.playbook.createMany({
         data: [
-            { name: 'Test', filename: 'test.yml', description: 'Check if playbooks can run' }
+            { name: 'Test', filename: 'test.yml', description: 'Check if playbooks can run' },
+            { name: 'Upgrade', filename: 'upgrade-system-packages.yml', description: 'Update and upgrade system packages'}
         ]
     })
 }

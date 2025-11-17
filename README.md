@@ -25,6 +25,7 @@ Managing our university's computer lab involves:
 - **Infrastructure as Code**: Terraform-based provisioning for Kubernetes clusters
 - **Real-time Monitoring**: Prometheus and Grafana for system health and metrics
 - **Configuration Management**: Ansible playbooks for consistent system setup
+- **S3 Local Cloud Storage Integration**: Automated backups, log archival, and storage of machine snapshots using S3-compatible object storage
 
 ## 🚧 Current Status
 **Active Development** - Building core synchronization and monitoring features

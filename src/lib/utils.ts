@@ -3,6 +3,7 @@ import { IUser, IUserDocument, IUserInput } from "@/types/user";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { format } from 'date-fns';
+import { Readable } from "stream";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -83,3 +84,13 @@ export const computerUsersToUsernames = (computer: IComputer | HydratedDocument)
 }
 
 export const parseDate = (date: Date) => format(date, "yyyy-MM-dd HH:mm");
+
+export function nodeToWebStream(nodeStream: Readable): ReadableStream {
+  return new ReadableStream({
+    start(controller) {
+      nodeStream.on("data", (chunk) => controller.enqueue(chunk));
+      nodeStream.on("end", () => controller.close());
+      nodeStream.on("error", (err) => controller.error(err));
+    }
+  });
+}

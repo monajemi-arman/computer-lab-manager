@@ -1,13 +1,14 @@
 import type { Document, Types } from 'mongoose';
 
-export type Access = 'public' | 'private';
+export type FileAccess = 'public' | 'private';
+
+export type IFileInput = Omit<IFile, createdAt>;
 
 export interface IFile {
-	uuid: string;
 	filename: string;
-	access: Access;
-	owner: Types.ObjectId | string;
-	users?: (Types.ObjectId | string)[];
+	access: FileAccess;
+	owner: string;
+	users?: string[];
 	size: number;
 	createdAt?: Date;
 }

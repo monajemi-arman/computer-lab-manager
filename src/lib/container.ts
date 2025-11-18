@@ -8,6 +8,9 @@ import { PrismaTaskRepository } from "@/repositories/implementations/prisma-task
 import { IPlaybookRepository } from "@/repositories/playbook-repository";
 import { ITaskRepository } from "@/repositories/task-repository";
 import { IUserRepository } from "@/repositories/user-repository";
+import { IFileRepository } from "@/repositories/file-repository";
+import { MongooseFileRepository } from "@/repositories/implementations/mongoose-file-repository";
+import { FileModel } from "@/models/file";
 
 export class Container {
     private instances: Map<string, any> = new Map(); // eslint-disable-line
@@ -17,6 +20,7 @@ export class Container {
         this.register<IComputerRepository>("IComputerRepository", new MongooseComputerRepository(ComputerModel));
         this.register<IPlaybookRepository>("IPlaybookRepository", new PrismaPlaybookRepository());
         this.register<ITaskRepository>("ITaskRepository", new PrismaTaskRepository());
+        this.register<IFileRepository>("IFileRepository", new MongooseFileRepository(FileModel));
     }
 
     public register<T>(key: string, instance: T): void {

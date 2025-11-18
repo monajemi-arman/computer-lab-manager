@@ -139,7 +139,7 @@ async function main() {
   // Build optional admin env entries only if provided
   let adminEntries = '';
   if (ADMIN_USERNAME) adminEntries += `ADMIN_USERNAME=${ADMIN_USERNAME}\n`;
-  if (ADMIN_PASSWORD) adminEntries += `ADMIN_PASSWORD=${ADMIN_PASSWORD_HASHED}\n`;
+  if (ADMIN_PASSWORD) adminEntries += `ADMIN_PASSWORD='${ADMIN_PASSWORD_HASHED}'\n`;
 
   // Hosts and DB not asked for by default, but we keep the original hosts per file:
   const MONGO_HOST_DEV = defaultDevHost;
@@ -202,6 +202,7 @@ ${adminEntries}
 # MinIO Credentials
 MINIO_ROOT_USER=${MINIO_ROOT_USER}
 MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+MINIO_ENDPOINT="localhost"
 
 MONGO_HOST=${MONGO_HOST_DEV}  # Development
 MONGO_DB=${MONGO_DB}
@@ -225,6 +226,7 @@ ${adminEntries}
 # MinIO Credentials
 MINIO_ROOT_USER=${MINIO_ROOT_USER}
 MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+MINIO_ENDPOINT="minio"
 
 MONGO_HOST=${MONGO_HOST_PROD}  # Production
 MONGO_DB=${MONGO_DB}

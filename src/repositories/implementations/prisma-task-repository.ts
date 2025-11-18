@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prismaClient";
 import { TaskStatus, Task } from "@prisma/client";
+import { ITaskRepository } from "../task-repository";
 
-export class PrismaTaskRepository {
+export class PrismaTaskRepository implements ITaskRepository {
     async create(task: TaskCreateInput) {
         return await prisma.task.create({ data: task });
     }

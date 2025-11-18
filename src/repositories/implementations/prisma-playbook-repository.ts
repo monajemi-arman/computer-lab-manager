@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prismaClient";
+import { IPlaybookRepository } from "../playbook-repository";
 
-export class PrismaPlaybookRepository {
+export class PrismaPlaybookRepository implements IPlaybookRepository {
     async create(playbook: PlaybookCreateInput) {
         return await prisma.playbook.create({ data: playbook });
     }

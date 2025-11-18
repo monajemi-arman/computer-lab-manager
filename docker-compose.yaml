@@ -1,5 +1,16 @@
 version: "3.8"
 services:
+  minio:
+    image: quay.io/minio/minio
+    restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: "server /data --console-address ':9001'"
+
   mongo:
     image: mongo
     restart: always
@@ -54,6 +65,8 @@ services:
       - 3000:3000
     depends_on:
       - mongo
+      - ansible
+      - minio
     networks:
       - app_net
 

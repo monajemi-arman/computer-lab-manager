@@ -114,6 +114,8 @@ async function main() {
   const defaultNextPublic = '/api';
   const defaultDevJwtKey = 'dev_jwt_private_key_change_me';
   const defaultSshUser = 'computer-lab-manager'; // New default SSH user
+  const defaultMinioRootUser = forge.util.bytesToHex(forge.random.getBytesSync(8)); // Auto-generate 16-char hex username
+  const defaultMinioRootPass = forge.util.bytesToHex(forge.random.getBytesSync(16)); // Auto-generate 32-char hex password
 
   const MONGO_INITDB_ROOT_USERNAME = await prompt('MONGO root username', defaultRootUser);
   const MONGO_INITDB_ROOT_PASSWORD = await promptHidden('MONGO root password', defaultRootPass);
@@ -123,6 +125,9 @@ async function main() {
   // Prompt for optional admin credentials (defaults empty)
   const ADMIN_USERNAME = await prompt('Admin username for dashboard login', 'admin');
   const ADMIN_PASSWORD = await promptHidden('Admin password for dashboard login', 'admin');
+
+  const MINIO_ROOT_USER = defaultMinioRootUser;
+  const MINIO_ROOT_PASSWORD = defaultMinioRootPass;
 
   const passwordToHash = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -183,13 +188,22 @@ async function main() {
     fs.writeFileSync(ansibleApiEnvPath, `ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}\n`, { encoding: 'utf8' });
     console.log(`ANSIBLE_API_SHARED_KEY written to: ${ansibleApiEnvPath}`);
 
+    // Prepare key values for env files: private key PEM with \n escapes, public key in OpenSSH single-line
+    const SSH_PRIVATE_KEY = privateKeyPem.replace(/\r?\n/g, '\\n');
+    const SSH_PUBLIC_KEY = publicKeyOpenSSH.trim();
+
     // Compose file contents
     const envDevelopment = `# Modify username and password for security
 MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
-${adminEntries}MONGO_HOST=${MONGO_HOST_DEV}  # Development
+${adminEntries}
+# MinIO Credentials
+MINIO_ROOT_USER=${MINIO_ROOT_USER}
+MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+
+MONGO_HOST=${MONGO_HOST_DEV}  # Development
 MONGO_DB=${MONGO_DB}
 MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_DEV}:27017/${MONGO_DB}
 DEV_JWT_PRIVATE_KEY=${defaultDevJwtKey}
@@ -198,6 +212,8 @@ ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
+SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+SSH_PUBLIC_KEY="${SSH_PUBLIC_KEY}"
 SSH_USER=${SSH_USER}`; // Removed ${sshKeyEntry} as keys are now in files
 
     const envProduction = `# Modify username and password for security
@@ -205,7 +221,12 @@ MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
-${adminEntries}MONGO_HOST=${MONGO_HOST_PROD}  # Production
+${adminEntries}
+# MinIO Credentials
+MINIO_ROOT_USER=${MINIO_ROOT_USER}
+MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+
+MONGO_HOST=${MONGO_HOST_PROD}  # Production
 MONGO_DB=${MONGO_DB}
 MONGODB_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOST_PROD}:27017/${MONGO_DB}
 ANSIBLE_API="http://ansible:8000"
@@ -213,6 +234,8 @@ ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
+SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+SSH_PUBLIC_KEY="${SSH_PUBLIC_KEY}"
 SSH_USER=${SSH_USER}`; // Removed ${sshKeyEntry} as keys are now in files
 
     const env = `# Modify username and password for security
@@ -220,11 +243,18 @@ MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
 MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
 MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
-${adminEntries}MONGO_DB=${MONGO_DB}
+${adminEntries}
+# MinIO Credentials
+MINIO_ROOT_USER=${MINIO_ROOT_USER}
+MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+
+MONGO_DB=${MONGO_DB}
 ANSIBLE_API_SHARED_KEY=${ANSIBLE_API_SHARED_KEY}
 
 # Next.JS parameters
 NEXT_PUBLIC_API_BASE=${defaultNextPublic}
+SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+SSH_PUBLIC_KEY="${SSH_PUBLIC_KEY}"
 SSH_USER=${SSH_USER}`; // Removed ${sshKeyEntry} as keys are now in files
 
     fs.writeFileSync('.env.development', envDevelopment, { encoding: 'utf8' });

@@ -8,5 +8,6 @@ const computerSchema = new Schema({
   users: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
-export const ComputerModel = (mongoose.models && mongoose.models.Computer) ||
-  mongoose.model<IComputerDocument>('Computer', computerSchema);
+export const ComputerModel = (mongoose.models && mongoose.models.Computer) ?
+    mongoose.models.Computer :
+    mongoose.model<IComputerDocument>('Computer', computerSchema);

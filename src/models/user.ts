@@ -10,5 +10,6 @@ const userSchema = new Schema({
   computers: [{ type: Schema.Types.ObjectId, ref: 'Computer' }]
 });
 
-export const UserModel = (mongoose.models && mongoose.models.User) ||
-  mongoose.model<IUserDocument>('User', userSchema);
+export const UserModel = (mongoose.models && mongoose.models.User) ?
+    mongoose.models.User :
+    mongoose.model<IUserDocument>('User', userSchema);

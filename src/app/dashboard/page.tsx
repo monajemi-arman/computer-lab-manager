@@ -14,6 +14,7 @@ import { useHash } from "@/hooks/use-hash";
 import { getIsAdmin } from "../actions";
 import AdminComputersView from "./admin/computers/view";
 import AdminSoftwareManagementView from "./admin/software-management/view";
+import FileUploadView from "./file-server/upload/view";
 
 export default function Page() {
   // States
@@ -42,9 +43,18 @@ export default function Page() {
           </div>
         </header>
         <DefaultDashboardView />
+        {
+          // Admin Views
+        }
         {hash == '#admin-users' && <AdminUsersView />}
         {hash == '#admin-computers' && <AdminComputersView />}
         {hash == '#admin-software-management' && <AdminSoftwareManagementView />}
+        {
+          // User Views
+        }
+        {hash == '#file-upload' && <FileUploadView />}
+        {hash == '#file-upload' && <FileUploadView />}
+        {hash == '#file-browse' && <FileBrowseView />}
       </SidebarInset>
     </SidebarProvider>
   )

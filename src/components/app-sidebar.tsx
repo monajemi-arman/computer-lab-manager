@@ -69,12 +69,12 @@ const data = {
       items: [
         {
           title: "Upload",
-          url: '#file-server-upload',
+          url: '#file-upload',
           icon: Upload
         },
         {
-          title: "Download",
-          url: '#file-server-download',
+          title: "Browse",
+          url: '#file-browse',
           icon: Download
         }
       ]
@@ -120,11 +120,6 @@ const data = {
         {
           title: "Software Management",
           url: "#admin-software-management",
-          icon: Download,
-        },
-        {
-          title: "File Server",
-          url: "#admin-file-server",
           icon: Download,
         }
       ],

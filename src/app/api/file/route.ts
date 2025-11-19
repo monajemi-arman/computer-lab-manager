@@ -1,6 +1,7 @@
 import { getSession } from '@/app/actions';
 import { container } from '@/lib/container';
 import { minioClientWrapper } from '@/lib/minio';
+import { connectToDatabase } from '@/lib/mongodb';
 import { responseJson } from '@/lib/utils';
 import { IFileRepository } from '@/repositories/file-repository';
 import { FileAccess } from '@/types/file';
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
 
         await minioClient.putObject(minioClientWrapper.bucket, fileName, buffer);
 
+        await connectToDatabase();
         const fileRepository = container.resolve<IFileRepository>("IFileRepository");
         if (!fileRepository) return responseJson("failed file repository load", 500);
 

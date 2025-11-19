@@ -4,6 +4,7 @@ import { IComputerRepository } from '@/repositories/computer-repository';
 import { getIsAdmin } from '@/app/actions';
 import { responseJson } from '@/lib/utils';
 import { NextRequest } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
 
 export async function GET(
     req: NextRequest,
@@ -17,12 +18,13 @@ export async function GET(
     const op = new Operation(hostname);
     const result = await op.test();
     if (result) {
+        await connectToDatabase();
         const computerRespository = container.resolve<IComputerRepository>("IComputerRepository");
         const computer = computerRespository ? await computerRespository?.findByHostname(hostname) : null;
         if (computer) {
             computer.status = 'active';
             await computerRespository?.update(computer.id, computer);
-            
+
             return responseJson("success");
         }
     }

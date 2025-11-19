@@ -1,6 +1,7 @@
 import { getIsAdmin, getSession } from "@/app/actions";
 import { container } from "@/lib/container";
 import { minioClientWrapper } from "@/lib/minio";
+import { connectToDatabase } from "@/lib/mongodb";
 import { nodeToWebStream, responseJson } from "@/lib/utils";
 import { IFileRepository } from "@/repositories/file-repository";
 import { NextRequest } from "next/server"
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const session = await getSession();
     const isAdmin = await getIsAdmin();
 
+    await connectToDatabase();
     const fileRepository = container.resolve<IFileRepository>("IFileRepository");
     const file = await fileRepository?.findByFilename(filename);
 
@@ -47,6 +49,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const session = await getSession();
     const isAdmin = await getIsAdmin();
 
+    await connectToDatabase();
     const fileRepository = container.resolve<IFileRepository>("IFileRepository");
     const file = await fileRepository?.findByFilename(filename);
 

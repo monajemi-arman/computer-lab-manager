@@ -15,6 +15,7 @@ import { getIsAdmin } from "../actions";
 import AdminComputersView from "./admin/computers/view";
 import AdminSoftwareManagementView from "./admin/software-management/view";
 import FileUploadView from "./file-server/upload/view";
+import { FileBrowseView } from "./file-server/browse/view";
 
 export default function Page() {
   // States
@@ -52,7 +53,6 @@ export default function Page() {
         {
           // User Views
         }
-        {hash == '#file-upload' && <FileUploadView />}
         {hash == '#file-upload' && <FileUploadView />}
         {hash == '#file-browse' && <FileBrowseView />}
       </SidebarInset>

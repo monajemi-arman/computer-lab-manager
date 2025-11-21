@@ -5,5 +5,6 @@ export interface IFileRepository {
     findByFilename(filename: string): Promise<IFileDocument | null>,
     findByOwner(owner: string): Promise<IFileDocument[]>,
     deleteByFilename(filename: string): Promise<boolean>,
+    deleteByOwner(owner: string): Promise<boolean>,
     deleteById(id: string): Promise<boolean>
 }

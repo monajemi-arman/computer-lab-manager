@@ -31,6 +31,15 @@ export class MongooseFileRepository implements IFileRepository {
         }
     }
 
+    async deleteByOwner(owner: string) {
+        try {
+            await this.model.deleteMany({ owner }).exec();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
     async deleteById(id: string) {
         try {
             await this.model.findByIdAndDelete(id).exec();

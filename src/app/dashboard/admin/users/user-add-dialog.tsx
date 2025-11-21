@@ -117,6 +117,7 @@ export function UserAddDialog({
                     name="role"
                     aria-label="User role"
                     className="w-full appearance-none rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm focus:border-sky-400 focus:ring-2 focus:ring-sky-200 disabled:opacity-50"
+                    defaultValue={'user'}
                   >
                     <option value="admin">Admin</option>
                     <option value="user">User</option>

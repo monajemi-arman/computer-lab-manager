@@ -1,8 +1,10 @@
 import { container } from "@/lib/container";
+import { minioClientWrapper } from "@/lib/minio";
 import { connectToDatabase } from "@/lib/mongodb";
 import { passwordToHash } from "@/lib/password/hash";
 import { responseJson, sanitizeUserOutput } from "@/lib/utils";
 import { updateUserSchema } from "@/lib/validation/userSchema";
+import { IFileRepository } from "@/repositories/file-repository";
 import { IUserRepository } from "@/repositories/user-repository";
 import { NextRequest } from "next/server";
 
@@ -66,11 +68,24 @@ export async function DELETE(
     if (!username)
         return responseJson("no username given", 404);
 
-    const foundUser = userRepository ? await userRepository.findByUsername(username) : null;;
+    const foundUser = userRepository ? await userRepository.findByUsername(username) : null;
 
     if (!foundUser || !foundUser.id)
         return responseJson('not found', 404);
 
     await userRepository?.delete(foundUser.id);
+
+    const fileRepository = container.resolve<IFileRepository>("IFileRepository");
+    if (!fileRepository) return responseJson('file repository not available, user files not deleted', 500);
+
+    const userFiles = await fileRepository.findByOwner(username);
+    if (userFiles && userFiles.length > 0) {
+        const minioClient = await minioClientWrapper.getClient();
+        for (const file of userFiles) {
+            await minioClient.removeObject(minioClientWrapper.bucket, file.filename);
+        }
+    }
+    await fileRepository.deleteByOwner(username);
+    
     return responseJson({});
 }

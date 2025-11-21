@@ -130,12 +130,12 @@ const data = {
       icon: Activity,
       items: [
         {
-          title: "Systems Load & Uptime",
-          url: "#admin-monitoring-systems",
-        },
-        {
           title: "Storage Statistics",
           url: "#admin-storage-statistics",
+        },
+        {
+          title: "Systems Load & Uptime",
+          url: "#admin-monitoring-systems",
         }
       ]
     },

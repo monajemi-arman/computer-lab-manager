@@ -16,6 +16,7 @@ import AdminComputersView from "./admin/computers/view";
 import AdminSoftwareManagementView from "./admin/software-management/view";
 import FileUploadView from "./file-server/upload/view";
 import { FileBrowseView } from "./file-server/browse/view";
+import { StorageStatisticsView } from "./monitoring/storage-statistics/view";
 
 export default function Page() {
   // States
@@ -50,6 +51,7 @@ export default function Page() {
         {hash == '#admin-users' && <AdminUsersView />}
         {hash == '#admin-computers' && <AdminComputersView />}
         {hash == '#admin-software-management' && <AdminSoftwareManagementView />}
+        {hash == '#admin-storage-statistics' && <StorageStatisticsView />}
         {
           // User Views
         }

@@ -6,23 +6,16 @@ import { Fragment, useEffect, useState } from "react"
 import { SwitchUser } from "./switch-user"
 import { getSession } from "@/app/actions"
 import { Session } from "next-auth"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { IFile } from "@/types/file"
 
-type FileEntry = {
+interface FileEntry {
     name: string
     type: "file" | "folder"
 }
 
-export function FileBrowser({
-    entries = [],
-    onOpen,
-    onDelete,
-    onDownload
-}: {
-    entries?: FileEntry[]
-    onOpen?: (name: string) => void
-    onDelete?: (name: string) => void
-    onDownload?: (name: string) => void
-}) {
+export function FileBrowser() {
+    const queryClient = useQueryClient();
     const [path, setPath] = useState<Array<string> | null>(null);
 
     useEffect(() => {
@@ -30,7 +23,48 @@ export function FileBrowser({
             if (session && session.user?.username)
                 setPath([session.user.username]);
         })
-    }, [])
+    }, []);
+
+    const onOpen = (name: string) => {
+        if (!path) return;
+        setPath(name.split('/'));
+    }
+
+    const onDelete = async (name: string) => {
+        if (!path) return;
+        const fullPath = [...path, name].join('/');
+        const res = await fetch(`/api/file/${fullPath}`, {
+            method: 'DELETE',
+        });
+        if (res.ok) {
+            queryClient.invalidateQueries({queryKey: ['file-entries-' + path?.join('/')]});
+        } else {
+            alert('Failed to delete file');
+        }
+    }
+
+    const onDownload = (name: string) => {
+        if (!path) return;
+        const fullPath = [...path, name].join('/');
+        window.location.href = `/api/file/${fullPath}`;
+    }
+
+    const {data: entries, isPending} = useQuery({
+        queryKey: ['file-entries-' + path?.join('/')],
+        queryFn: async () => {
+            if (!path) return [];
+            const res = await fetch(`/api/file/${path.join('/')}`);
+            if (!res.ok) throw new Error('Failed to fetch file entries');
+            const files: IFile[] = await res.json();
+
+            const entries: FileEntry[] = files.map(file => ({
+                name: file.filename.split('/').pop() || file.filename,
+                type: 'file'
+            }));
+
+            return entries;
+        }
+    })
 
     return (
         <div className="w-full min-h-screen">
@@ -45,7 +79,7 @@ export function FileBrowser({
                         <BreadcrumbList>
 
                             <BreadcrumbItem>
-                                <BreadcrumbLink onClick={() => onOpen?.("/")}>
+                                <BreadcrumbLink>
                                     /
                                 </BreadcrumbLink>
                             </BreadcrumbItem>
@@ -75,7 +109,13 @@ export function FileBrowser({
 
             {/* Files / Folders */}
             <div id="cards" className="flex-1 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {entries.map((entry, index) => (
+                {isPending && (
+                    <div>Loading...</div>
+                )}
+                {!entries || entries.length === 0 ? (
+                    <div>No files.</div>
+                ) : null}
+                {!isPending && entries && entries.map((entry, index) => (
                     <Card key={index} className="rounded-2xl shadow h-fit">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">

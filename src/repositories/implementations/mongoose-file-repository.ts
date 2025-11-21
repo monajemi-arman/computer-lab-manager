@@ -18,6 +18,10 @@ export class MongooseFileRepository implements IFileRepository {
         return await this.model.findOne({ filename }).exec();
     }
 
+    async findByOwner(owner: string) {
+        return await this.model.find({ owner }).exec();
+    }
+
     async deleteByFilename(filename: string) {
         try {
             await this.model.deleteOne({ filename }).exec();

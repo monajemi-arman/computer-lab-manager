@@ -4,7 +4,7 @@
 
 ![](./public/screenshot.png)
 
-Computer Lab Manager is an orchestration system designed to manage university computer labs and clusters. It solves the practical challenges of maintaining multiple systems while providing centralized control for synchronization, updates, and monitoring.
+Computer Lab Manager is an orchestration system designed to manage Linux computer labs and clusters. It solves the practical challenges of maintaining multiple systems while providing centralized control for synchronization, updates, and monitoring, not to mention extra features for users' ease of access!
 
 ## 🎯 The Problem
 

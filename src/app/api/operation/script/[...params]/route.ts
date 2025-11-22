@@ -10,7 +10,7 @@ export async function GET(
     if (!await getIsAdmin())
         return responseJson("not authorized for action", 401);
 
-    const [hostname, name] = (await params).params;
+    const [name, hostname] = (await params).params;
 
     if (!hostname || !name)
         return responseJson("invalid parameters", 400);

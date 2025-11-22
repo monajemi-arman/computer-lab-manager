@@ -22,7 +22,7 @@ for dir in /home/*; do
         user=$(basename "$dir")
 
         # Get usage in bytes
-        usage_bytes=$(du -sb "$dir" 2>/dev/null | awk '{print $1}')
+        usage_bytes=$(sudo du -sb "$dir" 2>/dev/null | awk '{print $1}')
         usage_hr=$(numfmt --to=iec "$usage_bytes")
 
         # Calculate percentage of total disk

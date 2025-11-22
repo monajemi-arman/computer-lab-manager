@@ -1,77 +1,31 @@
-import PieChart from "@/components/pie-chart";
 import { useQuery } from "@tanstack/react-query";
+import { StorageStatisticsCard } from "./storage-statistics-card";
+import { IComputer } from "@/types/computer";
 
 export function StorageStatisticsView() {
-    const { data: storageStats, isPending } = useQuery({
-        queryKey: ["storageStats"],
+    const { data: hostnames, isPending } = useQuery({
+        queryKey: ["storageHostnames"],
         queryFn: async () => {
-            const response = await fetch("/api/operation/script/storage-stats/localhost", {
-                method: "GET",
+            const res = await fetch(`/api/computer`, {
                 credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-            return response.json();
+                headers: { "Content-Type": "application/json" },
+            });
+            const result = await res.json();
+            return result.map((c: IComputer) => c.hostname);
         }
-    })
+    });
+
+    if (isPending) return <div>Loading...</div>;
+    if (!hostnames || hostnames.length === 0) return <div>No computers found</div>;
 
     return (
-        <>
-            {isPending && <div>Loading...</div>}
-            {storageStats && <PieChart title="localhost" chartData={transformStorageStats(storageStats)} />}
-        </>
+        <div className="flex flex-col">
+            <h1 className="p-4 text-2xl"><strong>Storage Statistics</strong></h1>
+        <div className="flex flex-wrap gap-4 p-4 justify-start items-start">
+            {hostnames.map((hostname: string) => (
+                <StorageStatisticsCard key={hostname} hostname={hostname} />
+            ))}
+        </div>
+        </div>
     )
-}
-
-export function transformStorageStats(storageStats: StorageStats) {
-    const diskSummary = storageStats.disk_summary;
-    const homeUsage = storageStats.home_usage;
-
-    // Calculate other used space (total used - sum of home usage)
-    const homeUsageTotalBytes = homeUsage.reduce((sum, user) => sum + user.used_bytes, 0);
-    const otherUsedBytes = diskSummary.used_bytes - homeUsageTotalBytes;
-
-    // Create labels and data for the complete pie chart
-    const labels = [
-        'Free Space',
-        ...homeUsage.filter(user => user.used_bytes > 0).map(user => `${user.user} (Home)`),
-        ...(otherUsedBytes > 0 ? ['Other Used Space'] : [])
-    ];
-
-    const data = [
-        diskSummary.free_bytes,
-        ...homeUsage.filter(user => user.used_bytes > 0).map(user => user.used_bytes),
-        ...(otherUsedBytes > 0 ? [otherUsedBytes] : [])
-    ];
-
-    // Color palette - dynamically assigned based on number of segments
-    const colorPalette = [
-        "#50AF95",  // Free space - green
-        "#2a71d0",  // User 1 - blue
-        "#f3ba2f",  // User 2 - yellow
-        "#ff6384",  // User 3 - pink
-        "#36a2eb",  // Other used - light blue
-        "#ffce56",  // Additional colors if needed
-        "#4bc0c0",
-        "#9966ff",
-        "#ff9f40"
-    ];
-
-    const backgroundColor = data.map((_, index) =>
-        colorPalette[index % colorPalette.length]
-    );
-
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: "Disk Space Allocation",
-                data: data,
-                backgroundColor: backgroundColor,
-                borderColor: "black",
-                borderWidth: 2
-            }
-        ]
-    };
 }

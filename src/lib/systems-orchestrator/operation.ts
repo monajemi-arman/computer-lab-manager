@@ -2,6 +2,7 @@ import { connectionManager } from "./connection"
 import { IUser } from "@/types/user";
 import fs from "fs";
 import path from "path";
+import { CommandResult } from "./command";
 
 export class Operation {
     public static CacheEntries: CacheEntry[] = [];
@@ -97,7 +98,10 @@ export class Operation {
 
     async runScript(name: string) {
         const cache = this.getCache(name);
-        if (cache) return JSON.parse(cache);
+        if (cache) {
+            const parsed = JSON.parse(cache);
+            return new CommandResult(parsed);
+        }
 
         const relativePath = `${path.join('src/lib/systems-orchestrator/scripts', name)}.sh`;
 

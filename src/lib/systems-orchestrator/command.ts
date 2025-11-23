@@ -3,10 +3,14 @@ export class CommandResult {
     returnCode: number
     outputArray: string[]
 
-    constructor() {
-        this.status = CommandStatus.pending;
-        this.returnCode = 0;
-        this.outputArray = [];
+    constructor({ status, returnCode, outputArray }: {
+        status?: CommandStatus,
+        returnCode?: number,
+        outputArray?: string[]
+    } = {}) {
+        this.status = status || CommandStatus.pending;
+        this.returnCode = returnCode || 0;
+        this.outputArray = outputArray || [];
     }
 
     get output() {

@@ -31,3 +31,6 @@ export async function GET(
 
     return responseJson("fail", 500);
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";

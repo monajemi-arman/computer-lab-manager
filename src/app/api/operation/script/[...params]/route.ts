@@ -21,3 +21,6 @@ export async function GET(
     if (result.returnCode !== 0) return responseJson("script returned non-zero exit code", 500);
     return responseJson(result.output ? JSON.parse(result.output) : "script executed successfully");
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";

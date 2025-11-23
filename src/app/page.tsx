@@ -1,11 +1,14 @@
 import { Heading1 } from "lucide-react";
 import Image from "next/image";
 
+console.log('b')
+
 export default function Home() {
+  console.log('a')
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        
+
         <h1 className="text-4xl md:text-6xl font-bold text-center sm:text-left">
           Computer Lab Manager
         </h1>

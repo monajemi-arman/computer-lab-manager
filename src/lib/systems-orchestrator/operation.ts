@@ -4,6 +4,11 @@ import fs from "fs";
 import path from "path";
 
 export class Operation {
+    public static CacheEntries: CacheEntry[] = [];
+    public static MaxOperationCacheAge: Record<string, number> = {
+        'storage-stats': 60 * 60 * 1000 // 1 hour
+    };
+
     hostname: string;
 
     /** Variables **/
@@ -91,6 +96,9 @@ export class Operation {
     }
 
     async runScript(name: string) {
+        const cache = this.getCache(name);
+        if (cache) return JSON.parse(cache);
+
         const relativePath = `${path.join('src/lib/systems-orchestrator/scripts', name)}.sh`;
 
         const client = await this.getClient();
@@ -127,6 +135,7 @@ export class Operation {
         const execResult = await this.run(`bash "${remotePath}"`);
         await this.run(`rm -f "${remotePath}"`);
 
+        this.setCache(name, JSON.stringify(execResult));
         return execResult;
     }
 
@@ -136,4 +145,53 @@ export class Operation {
     async getClient() {
         return await connectionManager.hostnameToClient(this.hostname);
     }
+
+    getOperationMaxAge(name: string) {
+        return Operation.MaxOperationCacheAge[name] || 5 * 60 * 1000;
+    }
+
+    getCache(name: string) {
+        const entry = Operation.CacheEntries.find(
+            (e) => e.name === name && e.hostname === this.hostname
+        );
+        if (!entry) return null;
+
+        const now = Date.now();
+        const age = now - entry.timestamp;
+        const maxAge = 60 * 60 * 1000;
+
+        if (age > maxAge) {
+            Operation.CacheEntries = Operation.CacheEntries.filter(
+                (e) => !(e.name === name && e.hostname === this.hostname)
+            );
+            return null;
+        }
+
+        return entry.data;
+    }
+
+    setCache(name: string, data: string) {
+        const now = Date.now();
+        const existingIndex = Operation.CacheEntries.findIndex(
+            (e) => e.name === name && e.hostname === this.hostname
+        );
+        if (existingIndex !== -1) {
+            Operation.CacheEntries[existingIndex].data = data;
+            Operation.CacheEntries[existingIndex].timestamp = now;
+        } else {
+            Operation.CacheEntries.push({
+                name,
+                hostname: this.hostname,
+                data,
+                timestamp: now
+            });
+        }
+    }
+}
+
+interface CacheEntry {
+    name: string;
+    hostname: string;
+    data: string;
+    timestamp: number;
 }

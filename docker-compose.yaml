@@ -10,6 +10,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: "server /data --console-address ':9001'"
+    volumes:
+      - minio_data:/data
 
   mongo:
     image: mongo
@@ -23,6 +25,7 @@ services:
     ports:
       - 27017:27017
     volumes:
+      - mongo_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - app_net
@@ -69,7 +72,17 @@ services:
       - minio
     networks:
       - app_net
+    volumes:
+      - nextjs_data:/usr/src/app/data
 
 networks:
   app_net:
     driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+  mongo_data:
+    driver: local
+  nextjs_data:
+    driver: local

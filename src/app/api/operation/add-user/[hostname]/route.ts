@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { Operation } from "@/lib/systems-orchestrator/operation";
 import { responseJson } from "@/lib/utils";
 import { IComputerRepository } from "@/repositories/computer-repository";
+import { IUserRepository } from "@/repositories/user-repository";
 import { NextRequest } from "next/server";
 
 export async function POST(
@@ -30,6 +31,13 @@ export async function POST(
     if (!authorized && username !== sshUsername) return new Response("forbidden", { status: 403 });
 
     const op = new Operation(hostname);
-    const result = await op.addUser(sshUsername );
+
+    const userRepository = container.resolve<IUserRepository>("IUserRepository");
+    if (!userRepository) return responseJson("user repository not available", 500);
+
+    const user = await userRepository.findByUsername(username);
+    if (!user) return responseJson("user not found", 404);
+
+    const result = await op.addUser(user);
     return responseJson({ success: result });
 }

@@ -6,6 +6,7 @@ import { getActivationScript } from "@/lib/systems-orchestrator/activate";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { toast, Toaster } from "sonner";
 
 export function ComputerActivateDialog({
     open,
@@ -23,13 +24,17 @@ export function ComputerActivateDialog({
         queryKey: ['computer-activation-' + hostname],
         queryFn: async () => {
             if (toActivate) {
+                const toastIdLoading = toast.loading("Activating...");
+
                 const result = await fetch("/api/operation/test/" + hostname);
                 if (result?.status === 200) {
-                    alert("Activation is successful!");
+                    toast.dismiss(toastIdLoading);
+                    toast.success("Activation is successful!");
                     return true;
                 }
                 else {
-                    alert("Activation failed!");
+                    toast.dismiss(toastIdLoading);
+                    toast.error("Activation failed!");
                     return false;
                 }
             }
@@ -59,7 +64,7 @@ export function ComputerActivateDialog({
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <><Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>Initial setup for: {hostname}</DialogTitle>
@@ -89,12 +94,12 @@ export function ComputerActivateDialog({
                     </Button>
                     <Button onClick={() => {
                         setToActivate(true);
-                        queryClient.invalidateQueries({queryKey: ['computer-activation-' + hostname]});
-                    }}>
+                        queryClient.invalidateQueries({ queryKey: ['computer-activation-' + hostname] });
+                    } }>
                         Activate
                     </Button>
                 </div>
             </DialogContent>
-        </Dialog>
+        </Dialog><Toaster /></>
     )
 }

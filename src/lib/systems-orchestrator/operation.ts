@@ -75,7 +75,9 @@ export class Operation {
     }
 
     // Add user
-    async addUser(user: IUser, isAdmin: boolean = false) {
+    async addUser(user: IUser) {
+        let isAdmin = false;
+        if (user.role === 'admin') isAdmin = true;
         if (await this.hasUsername(user.username)) return true;
 
         let result = await this.run(

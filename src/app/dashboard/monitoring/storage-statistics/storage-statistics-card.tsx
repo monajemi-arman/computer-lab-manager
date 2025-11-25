@@ -6,8 +6,10 @@ import {
     CardContent,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Loader } from "lucide-react";
 
-export function StorageStatisticsCard({hostname}: { hostname: string }) {
+export function StorageStatisticsCard({ hostname }: { hostname: string }) {
     const { data: storageStats, isPending } = useQuery({
         queryKey: ["storageStats"],
         queryFn: async () => {
@@ -19,7 +21,12 @@ export function StorageStatisticsCard({hostname}: { hostname: string }) {
         }
     });
 
-    if (isPending) return <div>Loading...</div>;
+    if (isPending) return (
+        <Alert className="w1/4">
+            <Loader />
+            <AlertTitle>Loading computers...</AlertTitle>
+        </Alert>
+    );
     if (!storageStats) return <div>No data</div>;
 
     const { disk_summary, home_usage } = storageStats;

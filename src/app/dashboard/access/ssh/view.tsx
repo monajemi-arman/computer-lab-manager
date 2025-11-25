@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { IComputer } from "@/types/computer";
 import { useQuery } from "@tanstack/react-query"
-import { CircleCheck, CircleX, Key, Lock } from "lucide-react";
+import { CircleCheck, CircleX, Key, Loader, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SetPasswordDialog } from "./set-password-dialog";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 export const AccessSshView = () => {
     const [hostname, setHostname] = useState<string | null>(null);
@@ -39,6 +42,8 @@ export const AccessSshView = () => {
     }
 
     const handleEnableAccess = (hostname: string) => async () => {
+        const toastIdLoading = toast.loading(`Enabling SSH access for ${hostname}...`);
+
         setHostname(hostname);
         const response = await fetch(`/api/operation/add-user/${hostname}`, {
             method: 'POST',
@@ -50,10 +55,12 @@ export const AccessSshView = () => {
         });
 
         if (response.ok) {
-            alert("Access enabled successfully.");
+            toast.dismiss(toastIdLoading);
+            toast.success(`SSH access enabled for ${hostname}`);
         } else {
+            toast.dismiss(toastIdLoading);
             const errorText = await response.text();
-            alert(`Failed to enable access: ${errorText}`);
+            toast.error(`Failed to enable SSH access for ${hostname}: ${errorText}`);
         }
     }
 
@@ -61,7 +68,12 @@ export const AccessSshView = () => {
         <div className="flex flex-col gap-4 p-4">
             <h1 className="text-2xl">Access Computers</h1>
             <div className="flex flex-row">
-                {isPending && <p>Loading...</p>}
+                {isPending &&
+                    <Alert className="w1/4">
+                        <Loader />
+                        <AlertTitle>Loading computers...</AlertTitle>
+                    </Alert>
+                }
                 {!computers && !isPending && <p>No computers found.</p>}
                 {!isPending && computers && computers.map((computer) => (
                     <Card key={computer.hostname} className="w-1/5">
@@ -84,6 +96,7 @@ export const AccessSshView = () => {
             {username && hostname &&
                 <SetPasswordDialog open={setPasswordOpen} onOpenChange={setSetPasswordOpen} hostname={hostname} username={username} />
             }
+            <Toaster />
         </div>
     )
 }

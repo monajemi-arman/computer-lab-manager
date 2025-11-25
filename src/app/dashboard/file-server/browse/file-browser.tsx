@@ -1,13 +1,14 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Folder, File as FileIcon } from "lucide-react"
+import { Folder, File as FileIcon, Loader } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 import { SwitchUser } from "./switch-user"
 import { getSession } from "@/app/actions"
 import { Session } from "next-auth"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { IFile } from "@/types/file"
+import { Alert, AlertTitle } from "@/components/ui/alert"
 
 interface FileEntry {
     name: string
@@ -37,7 +38,7 @@ export function FileBrowser() {
             method: 'DELETE',
         });
         if (res.ok) {
-            queryClient.invalidateQueries({queryKey: ['file-entries-' + path?.join('/')]});
+            queryClient.invalidateQueries({ queryKey: ['file-entries-' + path?.join('/')] });
         } else {
             alert('Failed to delete file');
         }
@@ -49,7 +50,7 @@ export function FileBrowser() {
         window.location.href = `/api/file/${fullPath}`;
     }
 
-    const {data: entries, isPending} = useQuery({
+    const { data: entries, isPending } = useQuery({
         queryKey: ['file-entries-' + path?.join('/')],
         queryFn: async () => {
             if (!path) return [];
@@ -110,7 +111,10 @@ export function FileBrowser() {
             {/* Files / Folders */}
             <div id="cards" className="flex-1 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {isPending && (
-                    <div>Loading...</div>
+                    <Alert className="w1/4">
+                        <Loader />
+                        <AlertTitle>Loading computers...</AlertTitle>
+                    </Alert>
                 )}
                 {!entries || entries.length === 0 ? (
                     <div>No files.</div>

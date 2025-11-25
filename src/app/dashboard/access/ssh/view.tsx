@@ -56,8 +56,6 @@ export const AccessSshView = () => {
         }
     }
 
-    console.log("Computers:", computers);
-
     return (
         <div className="flex flex-col gap-4 p-4">
             <h1 className="text-2xl">Access Computers</h1>

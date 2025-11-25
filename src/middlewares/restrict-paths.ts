@@ -1,4 +1,4 @@
-import { MiddlewareFactory } from "@/types/middleware";
+import { MiddlewareFactory } from "@/types/proxy";
 import {
     NextFetchEvent,
     NextRequest,

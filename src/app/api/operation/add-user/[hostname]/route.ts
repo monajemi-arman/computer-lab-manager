@@ -1,5 +1,6 @@
 import { getIsAdmin, getSession } from "@/app/actions";
 import { container } from "@/lib/container";
+import { connectToDatabase } from "@/lib/mongodb";
 import { Operation } from "@/lib/systems-orchestrator/operation";
 import { responseJson } from "@/lib/utils";
 import { IComputerRepository } from "@/repositories/computer-repository";
@@ -17,6 +18,7 @@ export async function POST(
     const username = session?.user.username || null;
     if (!username) return new Response("unauthorized", { status: 401 });
 
+    await connectToDatabase();
     const computerRepository = container.resolve<IComputerRepository>("IComputerRepository");
     if (!computerRepository) return responseJson("computer repository not available", 500);
 

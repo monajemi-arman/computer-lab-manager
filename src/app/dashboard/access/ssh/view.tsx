@@ -23,7 +23,8 @@ export const AccessSshView = () => {
             });
             const computers = await response.json();
             return computers;
-        }
+        },
+        enabled: !!username,
     });
 
     useEffect(() => {

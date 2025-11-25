@@ -5,7 +5,7 @@ import { IComputerDocument, IComputerInput } from "@/types/computer";
 export class MongooseComputerRepository implements IComputerRepository {
     private model: Model<IComputerDocument>;
 
-    constructor (model: Model<IComputerDocument>) {
+    constructor(model: Model<IComputerDocument>) {
         this.model = model;
     }
 
@@ -15,6 +15,17 @@ export class MongooseComputerRepository implements IComputerRepository {
 
     async findByHostname(hostname: string): Promise<IComputerDocument | null> {
         return await this.model.findOne({ hostname }).populate('users').exec();
+    }
+
+    async findByUserId(userId: string): Promise<IComputerDocument[]> {
+        return this.model.find({ users: userId }).exec();
+    }
+
+    async hasAccessToComputer(username: string, hostname: string): Promise<boolean> {
+        const computer = await this.model.findOne({ hostname }).populate('users').exec();
+        if (!computer || !computer.users) return false;
+        const userIds = computer.users.map(user => user.username);
+        return userIds.includes(username);
     }
 
     async findAll(): Promise<IComputerDocument[]> {

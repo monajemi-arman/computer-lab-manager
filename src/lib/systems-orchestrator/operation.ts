@@ -96,6 +96,17 @@ export class Operation {
         return !!result?.success;
     }
 
+    // Set user password
+    async setUserPassword(username: string, password: string) {
+        if (!await this.hasUsername(username)) return false;
+
+        const cmd = `echo "${username}:${password}" | sudo chpasswd`;
+
+        const result = await this.run(cmd);
+        return !!result?.success;
+    }
+
+    // Run script
     async runScript(name: string) {
         const cache = this.getCache(name);
         if (cache) {

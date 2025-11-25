@@ -51,14 +51,14 @@ const data = {
       icon: Monitor,
       items: [
         {
-          title: "Remote Desktop",
-          url: "#access-remote-desktop",
-          icon: Smartphone,
-        },
-        {
           title: "SSH",
           url: "#access-ssh",
           icon: Terminal,
+        },
+        {
+          title: "Port Forwarding",
+          url: "#access-port-forwarding",
+          icon: Smartphone,
         },
       ],
     },
@@ -132,10 +132,6 @@ const data = {
         {
           title: "Storage Statistics",
           url: "#admin-storage-statistics",
-        },
-        {
-          title: "Systems Load & Uptime",
-          url: "#admin-monitoring-systems",
         }
       ]
     },

@@ -93,7 +93,7 @@ export default function DefaultDashboardView() {
 					<ul>
 						<li>&#9989;{' '} Centralized <strong>user management</strong> and synchronization</li>
 						<li>&#9989;{' '} Automated system updates and <strong>remote access tools</strong></li>
-						<li>&#9989;{' '} <strong>Monitoring</strong> integrations (Prometheus / Grafana) and IaC tooling</li>
+						<li>&#9989;{' '} <strong>Monitoring</strong> system storage statistics</li>
 					</ul>
 				</section>
 			</main>

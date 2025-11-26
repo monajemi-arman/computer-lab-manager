@@ -6,29 +6,14 @@
 
 Computer Lab Manager is an orchestration system designed to manage Linux computer labs and clusters. It solves the practical challenges of maintaining multiple systems while providing centralized control for synchronization, updates, and monitoring, not to mention extra features for users' ease of access!
 
-## 🎯 The Problem
+## 🛠 Core Features
 
-Managing our university's computer lab involves:
-- Manually synchronizing user accounts across 20+ workstations
-- Coordinating system updates without disrupting lab sessions
-- Monitoring hardware health and storage space across all machines
-- Maintaining consistent software configurations
-- Providing remote access for maintenance and support
-- Balancing computational workloads efficiently
-
-## 🛠 The Solution
-
-### Core Features
-- **Centralized User Management**: Synchronize user accounts across all lab computers
+- **Centralized User Management**: Synchronize user accounts
 - **Automated System Updates**: Coordinate apt updates with centralized caching
-- **Remote Access Control**: SSH management and RustDesk remote desktop deployment
-- **Infrastructure as Code**: Terraform-based provisioning for Kubernetes clusters
-- **Real-time Monitoring**: Prometheus and Grafana for system health and metrics
+- **Remote Access Control**: SSH account management
+- **Real-time Monitoring**: Monitoring for system health and metrics
 - **Configuration Management**: Ansible playbooks for consistent system setup
-- **S3 Local Cloud Storage Integration**: Automated backups, log archival, and storage of machine snapshots using S3-compatible object storage
-
-## 🚧 Current Status
-**Active Development** - Building core synchronization and monitoring features
+- **S3 Local Cloud Storage Integration**: Users can upload files using S3-compatible object storage
 
 ## 📖 Usage
 

@@ -3,12 +3,14 @@ import { IUser } from "@/types/user";
 import fs from "fs";
 import path from "path";
 import { CommandResult } from "./command";
+import { Server } from "net";
 
 export class Operation {
     public static CacheEntries: CacheEntry[] = [];
     public static MaxOperationCacheAge: Record<string, number> = {
         'storage-stats': 60 * 60 * 1000 // 1 hour
     };
+    static #portToServer: Map<number, Server>;
 
     hostname: string;
 
@@ -156,6 +158,44 @@ export class Operation {
         return execResult;
     }
 
+    // Port Forwarding
+    async forwardLocalPort(localPort: number, remotePort: number) {
+        const server = await connectionManager.forwardLocalPort(
+            this.hostname,
+            localPort,
+            this.hostname,
+            remotePort
+        );
+
+        Operation.#portToServer.set(localPort, server);
+
+        return true;
+    }
+
+    disablePortForward(localPort: number) {
+        const server = Operation.#portToServer.get(localPort);
+
+        return new Promise<void>((resolve, reject) => {
+            if (!server) return resolve();
+
+            try {
+                server.close((err: unknown) => {
+                    if (err) return reject(err);
+                    console.log("Port forwarding disabled");
+                    resolve();
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+    
+    async isPortForwardingAlive(localPort: number) {
+        if (Operation.#portToServer.get(localPort)) {
+            return await connectionManager.isPortForwardAlive(localPort);
+        }
+        else return false;
+    }
 
     /** Helpers **/
 

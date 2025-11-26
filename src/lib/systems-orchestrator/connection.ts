@@ -4,6 +4,7 @@ import { container } from '../container';
 import { IComputerRepository } from '@/repositories/computer-repository';
 import { waitFor } from '../utils';
 import { CommandResult, CommandStatus } from './command';
+import net, { Server } from 'net';
 
 class Connection {
     client: Client;
@@ -100,6 +101,64 @@ class ConnectionManager {
         await waitFor(() => commandResult.ended);
         return commandResult;
     }
+
+    async forwardLocalPort(
+        hostname: string,
+        localPort: number,
+        remoteHost: string,
+        remotePort: number
+    ) {
+        const client: Client | null | undefined = await this.hostnameToClient(hostname);
+        if (!client) throw new Error(`Unable to open SSH connection for ${hostname}`);
+
+        return new Promise<Server>((resolve, reject) => {
+            const server = net.createServer((localSocket) => {
+                client.forwardOut(
+                    "127.0.0.1",
+                    0,
+                    remoteHost,
+                    remotePort,
+                    (err, sshStream) => {
+                        if (err) {
+                            console.error("forwardOut error:", err);
+                            localSocket.end();
+                            return;
+                        }
+
+                        localSocket.pipe(sshStream).pipe(localSocket);
+                    }
+                );
+            });
+
+            server.listen(localPort, "127.0.0.1", () => {
+                console.log(
+                    `SSH forward active for ${hostname}: local ${localPort} → ${remoteHost}:${remotePort}`
+                );
+
+                resolve(server);
+            });
+
+            server.on("error", reject);
+        });
+    }
+
+    async isPortForwardAlive(localPort: number): Promise<boolean> {
+        return new Promise((resolve) => {
+            const socket = new net.Socket();
+
+            socket.once("connect", () => {
+                socket.destroy();
+                resolve(true);
+            });
+
+            socket.once("error", () => {
+                resolve(false);
+            });
+
+            socket.connect(localPort, "127.0.0.1");
+        });
+    }
+
 }
 
 export const connectionManager = ConnectionManager.instance;

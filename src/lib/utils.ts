@@ -94,3 +94,7 @@ export function nodeToWebStream(nodeStream: Readable): ReadableStream {
     }
   });
 }
+
+export function sleep(seconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+}

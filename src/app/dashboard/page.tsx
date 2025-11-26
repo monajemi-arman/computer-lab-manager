@@ -18,6 +18,7 @@ import FileUploadView from "./file-server/upload/view";
 import { FileBrowseView } from "./file-server/browse/view";
 import { StorageStatisticsView } from "./monitoring/storage-statistics/view";
 import { AccessSshView } from "./access/ssh/view";
+import { ProfileChangePasswordView } from "./profile/change-password/view";
 
 export default function Page() {
   // States
@@ -59,6 +60,7 @@ export default function Page() {
         {hash == '#file-upload' && <FileUploadView />}
         {hash == '#file-browse' && <FileBrowseView />}
         {hash == '#access-ssh' && <AccessSshView />}
+        {hash == '#profile-change-password' && <ProfileChangePasswordView />}
       </SidebarInset>
     </SidebarProvider>
   )

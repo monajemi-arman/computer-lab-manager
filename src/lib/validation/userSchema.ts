@@ -18,3 +18,8 @@ export const updateUserSchema = z.object({
   role: z.enum(['admin', 'user']).optional(),
   computers: z.array(z.string()).optional(),
 })
+
+export const changePasswordSchema = z.object({
+  password: z.string().min(4),
+  currentPassword: z.string().min(4),
+})

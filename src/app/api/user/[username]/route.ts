@@ -47,10 +47,12 @@ export async function PUT(
         user.password = await passwordToHash(user.password);
     }
 
-    const foundUser = userRepository ? await userRepository.findByUsername(username) : null;;
+    const foundUser = userRepository ? await userRepository.findByUsername(username) : null;
 
     if (!foundUser || !foundUser.id)
         return responseJson('not found', 404);
+    if (foundUser.username !== username)
+        return responseJson('modifying username not possible', 400)
 
     const result = await userRepository?.update(foundUser.id, user)
     if (result) return responseJson(sanitizeUserOutput(result.toObject()));

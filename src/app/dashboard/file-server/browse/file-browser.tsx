@@ -113,7 +113,7 @@ export function FileBrowser() {
                 {isPending && (
                     <Alert className="w1/4">
                         <Loader />
-                        <AlertTitle>Loading computers...</AlertTitle>
+                        <AlertTitle>Loading files...</AlertTitle>
                     </Alert>
                 )}
                 {!entries || entries.length === 0 ? (

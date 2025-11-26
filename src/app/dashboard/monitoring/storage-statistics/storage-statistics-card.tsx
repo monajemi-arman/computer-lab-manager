@@ -24,7 +24,7 @@ export function StorageStatisticsCard({ hostname }: { hostname: string }) {
     if (isPending) return (
         <Alert className="w1/4">
             <Loader />
-            <AlertTitle>Loading computers...</AlertTitle>
+            <AlertTitle>Loading statistics...</AlertTitle>
         </Alert>
     );
     if (!storageStats) return <div>No data</div>;

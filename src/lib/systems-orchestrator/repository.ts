@@ -1,23 +1,23 @@
 import path from "path";
 import fs from "fs/promises";
 
-class PortForwardingRepository {
-    static #instance: PortForwardingRepository;
+class BackgroundTasksRepository {
+    static #instance: BackgroundTasksRepository;
     private dbFilePath: string;
     private data: DatabaseEntry[] = [];
 
     private constructor() {
-        this.dbFilePath = path.join(__dirname, 'port-forwarding-db.json');
+        this.dbFilePath = path.join(__dirname, 'tasks-db.json');
     }
 
-    static async getInstance(): Promise<PortForwardingRepository> {
-        if (!PortForwardingRepository.#instance) {
-            PortForwardingRepository.#instance = new PortForwardingRepository();
+    static async getInstance(): Promise<BackgroundTasksRepository> {
+        if (!BackgroundTasksRepository.#instance) {
+            BackgroundTasksRepository.#instance = new BackgroundTasksRepository();
         }
 
-        await PortForwardingRepository.#instance.#load();
+        await BackgroundTasksRepository.#instance.#load();
 
-        return PortForwardingRepository.#instance;
+        return BackgroundTasksRepository.#instance;
     }
 
     async add(dbEntry: DatabaseEntry) {
@@ -42,16 +42,6 @@ class PortForwardingRepository {
         await this.#save();
     }
 
-    async removeAllByOwner(owner: string) {
-        this.data = this.data.filter(entry => entry.owner !== owner);
-        await this.#save();
-    }
-
-    async removeByHostAndPort(host: string, port: number) {
-        this.data = this.data.filter(entry => !(entry.host === host && entry.port === port));
-        await this.#save();
-    }
-
     async #save(): Promise<void> {
         await fs.writeFile(this.dbFilePath, JSON.stringify(this.data));
     }
@@ -69,4 +59,4 @@ interface DatabaseEntry {
     port: number;
 }
 
-export const portForwardingRepository = await PortForwardingRepository.getInstance();
+export const portForwardingRepository = await BackgroundTasksRepository.getInstance();

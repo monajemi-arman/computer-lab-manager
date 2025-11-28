@@ -10,7 +10,7 @@ Computer Lab Manager is an orchestration system designed to manage Linux compute
 
 - **Centralized User Management**: Synchronize user accounts
 - **Automated System Updates**: Coordinate apt updates with centralized caching
-- **Remote Access Control**: SSH account management
+- **Remote Access**: Port forwarding management for computers behind NAT for remote connection
 - **Real-time Monitoring**: Monitoring for system health and metrics
 - **Configuration Management**: Ansible playbooks for consistent system setup
 - **S3 Local Cloud Storage Integration**: Users can upload files using S3-compatible object storage

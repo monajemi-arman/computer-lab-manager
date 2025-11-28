@@ -14,6 +14,7 @@ interface Task {
     arguments: Array<unknown>;
     status?: "success" | "fail";
     result?: unknown;
+    delay?: number
     reverse?: boolean;
 }
 
@@ -28,6 +29,7 @@ class BackgroundTasks {
     private static runningTasks: Task[] = [];
     private static completedTasks: Task[] = [];
     private static repeatingTasks: Task[] = [];
+    private oldData: string = '';
 
     private taskHandlers: { [key: string]: (task: Task) => Promise<Task> } = {
         "portMapHandler": this.portMapHandler.bind(this),
@@ -65,6 +67,12 @@ class BackgroundTasks {
         await fs.writeFile(this.dbFilePath, JSON.stringify(this.#data));
     }
 
+    async #saveIfChanged(): Promise<void> {
+        if (JSON.stringify(this.oldData) !== JSON.stringify(this.#data))
+            await this.#save();
+        this.oldData = JSON.parse(JSON.stringify(this.#data));
+    }
+
     async #load(): Promise<void> {
         if (BackgroundTasks.loaded) return;
         try {
@@ -90,10 +98,13 @@ class BackgroundTasks {
     }
 
     startTasks = async () => {
+        await this.#load();
+        this.doRepeatingTasks().catch(console.error);
+
         while (true) {
-            await sleep(5);
-            await this.#load();
+            await this.#saveIfChanged();
             this.cleanupCompletedTasks();
+            await sleep(5);
             if (BackgroundTasks.toDoTasks.length === 0) continue;
 
             const task = BackgroundTasks.toDoTasks.shift()!;
@@ -112,17 +123,19 @@ class BackgroundTasks {
             } else {
                 console.error(`No handler found for task: ${task.handler}`);
             }
-            await this.#save();
+
+            BackgroundTasks.runningTasks = BackgroundTasks.runningTasks.filter((t) => t.id !== task.id);
         }
     }
 
-    async repeatTaskLater(task: Task, delay: number) {
-        BackgroundTasks.repeatingTasks.push(task);
-        await sleep(delay);
+    doRepeatingTasks = async () => {
+        while (true) {
+            if (BackgroundTasks.repeatingTasks.length !== 0) {
+                const task = BackgroundTasks.repeatingTasks.shift()!;
+                BackgroundTasks.toDoTasks.push(task);
+            }
 
-        if (BackgroundTasks.repeatingTasks.some(t => t.id === task.id)) {
-            BackgroundTasks.repeatingTasks = BackgroundTasks.repeatingTasks.filter(t => t.id !== task.id);
-            BackgroundTasks.toDoTasks.push(task);
+            await sleep(1);
         }
     }
 
@@ -141,18 +154,17 @@ class BackgroundTasks {
                 try {
                     task.status = 'success';
                     task.result = await op.forwardLocalPort(localPort, remotePort);
-                    return task;
                 } catch (e: unknown) {
                     console.error(e);
                     task.status = 'fail';
                     task.result = JSON.stringify(e);
-                    return task;
                 }
             }
 
             // Keep port alive
             BackgroundTasks.portToTaskId.set(localPort, task.id);
-            this.repeatTaskLater(task, 300).catch(console.error);
+            BackgroundTasks.repeatingTasks.push({ ...task, delay: 300 })
+            return task;
         }
         else {
             const foundTaskId = BackgroundTasks.portToTaskId.get(localPort);

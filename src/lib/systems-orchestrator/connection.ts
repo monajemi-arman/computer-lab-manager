@@ -136,7 +136,7 @@ class ConnectionManager {
             });
 
             server.listen(localPort, "0.0.0.0", () => {
-                console.log(
+                console.debug(
                     `SSH forward active for ${hostname}: local ${localPort} → ${remoteHost}:${remotePort}`
                 );
 

@@ -1,9 +1,12 @@
 import z from "zod";
 import { sleep, waitFor } from "../utils";
 import { Operation } from "./operation";
-import path from "path";
 import fs from 'fs/promises';
 import { v4 } from 'uuid';
+
+declare global {
+    var __backgroundTasks: BackgroundTasks | undefined;
+}
 
 interface Task {
     id: string;
@@ -16,21 +19,22 @@ interface Task {
 
 class BackgroundTasks {
     static #instance: BackgroundTasks;
-    static portToTaskId: Map<number, string>;
-    static loadFails = 0;
+    static portToTaskId: Map<number, string> = new Map();
+    private static loadFails = 0;
+    private static loaded = false;
     private dbFilePath: string;
 
-    private toDoTasks: Task[] = [];
-    private runningTasks: Task[] = [];
-    private completedTasks: Task[] = [];
-    private repeatingTasks: Task[] = [];
+    private static toDoTasks: Task[] = [];
+    private static runningTasks: Task[] = [];
+    private static completedTasks: Task[] = [];
+    private static repeatingTasks: Task[] = [];
 
     private taskHandlers: { [key: string]: (task: Task) => Promise<Task> } = {
         "portMapHandler": this.portMapHandler.bind(this),
     };
 
     private constructor() {
-        this.dbFilePath = path.join(__dirname, 'tasks-db.json');
+        this.dbFilePath = './src/lib/systems-orchestrator/tasks-db.json';
     }
 
     static getInstance(): BackgroundTasks {
@@ -38,25 +42,23 @@ class BackgroundTasks {
             BackgroundTasks.#instance = new BackgroundTasks();
         }
 
-        BackgroundTasks.#instance.startTasks().catch(console.error);
-
         return BackgroundTasks.#instance;
     }
 
     get #data() {
         return {
-            toDoTasks: this.toDoTasks,
-            runningTasks: this.runningTasks,
-            completedTasks: this.completedTasks,
-            repeatingTasks: this.repeatingTasks
+            toDoTasks: BackgroundTasks.toDoTasks,
+            runningTasks: BackgroundTasks.runningTasks,
+            completedTasks: BackgroundTasks.completedTasks,
+            repeatingTasks: BackgroundTasks.repeatingTasks
         }
     }
 
     set #data({ toDoTasks, runningTasks, completedTasks, repeatingTasks }) {
-        if (toDoTasks !== undefined) this.toDoTasks = toDoTasks;
-        if (runningTasks !== undefined) this.runningTasks = runningTasks;
-        if (completedTasks !== undefined) this.completedTasks = completedTasks;
-        if (repeatingTasks !== undefined) this.repeatingTasks = repeatingTasks;
+        if (toDoTasks !== undefined) BackgroundTasks.toDoTasks = toDoTasks;
+        if (runningTasks !== undefined) BackgroundTasks.runningTasks = runningTasks;
+        if (completedTasks !== undefined) BackgroundTasks.completedTasks = completedTasks;
+        if (repeatingTasks !== undefined) BackgroundTasks.repeatingTasks = repeatingTasks;
     }
 
     async #save(): Promise<void> {
@@ -64,6 +66,7 @@ class BackgroundTasks {
     }
 
     async #load(): Promise<void> {
+        if (BackgroundTasks.loaded) return;
         try {
             await fs.access(this.dbFilePath);
 
@@ -75,49 +78,51 @@ class BackgroundTasks {
             BackgroundTasks.loadFails += 1;
             await this.#save();
         }
+        BackgroundTasks.loaded = true;
     }
 
-    addTask(task: Omit<Task, 'id'>) {
-        this.toDoTasks.push({...task, id: v4()});
+    addTask = (task: Omit<Task, 'id'>) => {
+        BackgroundTasks.toDoTasks.push({ ...task, id: v4() });
     }
 
     cleanupCompletedTasks() {
-        this.completedTasks = this.completedTasks.slice(-20);
+        BackgroundTasks.completedTasks = BackgroundTasks.completedTasks.slice(-20);
     }
 
-    async startTasks() {
+    startTasks = async () => {
         while (true) {
-            await this.#load;
+            await sleep(5);
+            await this.#load();
             this.cleanupCompletedTasks();
-            await waitFor(() => this.toDoTasks.length > 0);
-            const task = this.toDoTasks.shift()!;
-            this.runningTasks.push(task);
+            if (BackgroundTasks.toDoTasks.length === 0) continue;
+
+            const task = BackgroundTasks.toDoTasks.shift()!;
+            BackgroundTasks.runningTasks.push(task);
 
             // Execute the task
             if (task.handler in this.taskHandlers) {
                 this.taskHandlers[task.handler](task).then((t) => {
-                    this.completedTasks.push(t);
+                    BackgroundTasks.completedTasks.push(t);
                 }
                 ).catch((err) => {
                     console.error(`Error executing task ${task.id}:`, err);
                     task.status = "fail";
-                    this.completedTasks.push(task);
+                    BackgroundTasks.completedTasks.push(task);
                 })
             } else {
                 console.error(`No handler found for task: ${task.handler}`);
             }
             await this.#save();
-            await sleep(5);
         }
     }
 
     async repeatTaskLater(task: Task, delay: number) {
-        this.repeatingTasks.push(task);
+        BackgroundTasks.repeatingTasks.push(task);
         await sleep(delay);
 
-        if (task.id in this.repeatingTasks.map((t) => t.id)) {
-            this.repeatingTasks = this.repeatingTasks.filter(t => t.id !== task.id);
-            this.toDoTasks.push(task);
+        if (BackgroundTasks.repeatingTasks.some(t => t.id === task.id)) {
+            BackgroundTasks.repeatingTasks = BackgroundTasks.repeatingTasks.filter(t => t.id !== task.id);
+            BackgroundTasks.toDoTasks.push(task);
         }
     }
 
@@ -151,11 +156,12 @@ class BackgroundTasks {
         }
         else {
             const foundTaskId = BackgroundTasks.portToTaskId.get(localPort);
-            this.repeatingTasks.filter((t) => t.id !== foundTaskId);
+            BackgroundTasks.repeatingTasks.filter((t) => t.id !== foundTaskId);
         }
 
         return task;
     }
 }
 
-export const backgroundTasks = BackgroundTasks.getInstance();
+export const backgroundTasks =
+    global.__backgroundTasks || (global.__backgroundTasks = BackgroundTasks.getInstance());

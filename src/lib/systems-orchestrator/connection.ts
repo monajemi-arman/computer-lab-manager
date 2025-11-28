@@ -105,16 +105,21 @@ class ConnectionManager {
     async forwardLocalPort(
         hostname: string,
         localPort: number,
-        remoteHost: string,
         remotePort: number
     ) {
+        const remoteHost = await this.hostToAddress(hostname);
+        if (!remoteHost) {
+            console.error('address associated with given hostname for operation not found');
+            return;
+        }
+
         const client: Client | null | undefined = await this.hostnameToClient(hostname);
         if (!client) throw new Error(`Unable to open SSH connection for ${hostname}`);
 
         return new Promise<Server>((resolve, reject) => {
             const server = net.createServer((localSocket) => {
                 client.forwardOut(
-                    "127.0.0.1",
+                    "0.0.0.0",
                     0,
                     remoteHost,
                     remotePort,
@@ -130,7 +135,7 @@ class ConnectionManager {
                 );
             });
 
-            server.listen(localPort, "127.0.0.1", () => {
+            server.listen(localPort, "0.0.0.0", () => {
                 console.log(
                     `SSH forward active for ${hostname}: local ${localPort} → ${remoteHost}:${remotePort}`
                 );

@@ -10,7 +10,7 @@ export class Operation {
     public static MaxOperationCacheAge: Record<string, number> = {
         'storage-stats': 60 * 60 * 1000 // 1 hour
     };
-    static #portToServer: Map<number, Server>;
+    static #portToServer: Map<number, Server> = new Map();
 
     hostname: string;
 
@@ -163,10 +163,10 @@ export class Operation {
         const server = await connectionManager.forwardLocalPort(
             this.hostname,
             localPort,
-            this.hostname,
             remotePort
         );
 
+        if (!server) return;
         Operation.#portToServer.set(localPort, server);
 
         return true;

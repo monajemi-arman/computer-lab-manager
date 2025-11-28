@@ -160,6 +160,8 @@ export class Operation {
 
     // Port Forwarding
     async forwardLocalPort(localPort: number, remotePort: number) {
+        if (await this.isPortForwardingAlive(localPort)) return true;
+        
         const server = await connectionManager.forwardLocalPort(
             this.hostname,
             localPort,

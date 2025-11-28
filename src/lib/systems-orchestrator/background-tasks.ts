@@ -21,6 +21,7 @@ interface Task {
 class BackgroundTasks {
     static #instance: BackgroundTasks;
     static portToTaskId: Map<number, string> = new Map();
+    static taskNextRunAt: Map<string, number> = new Map();
     private static loadFails = 0;
     private static loaded = false;
     private dbFilePath: string;
@@ -29,7 +30,7 @@ class BackgroundTasks {
     private static runningTasks: Task[] = [];
     private static completedTasks: Task[] = [];
     private static repeatingTasks: Task[] = [];
-    private oldData: string = '';
+    private oldDataString: string = '';
 
     private taskHandlers: { [key: string]: (task: Task) => Promise<Task> } = {
         "portMapHandler": this.portMapHandler.bind(this),
@@ -49,17 +50,11 @@ class BackgroundTasks {
 
     get #data() {
         return {
-            toDoTasks: BackgroundTasks.toDoTasks,
-            runningTasks: BackgroundTasks.runningTasks,
-            completedTasks: BackgroundTasks.completedTasks,
             repeatingTasks: BackgroundTasks.repeatingTasks
         }
     }
 
-    set #data({ toDoTasks, runningTasks, completedTasks, repeatingTasks }) {
-        if (toDoTasks !== undefined) BackgroundTasks.toDoTasks = toDoTasks;
-        if (runningTasks !== undefined) BackgroundTasks.runningTasks = runningTasks;
-        if (completedTasks !== undefined) BackgroundTasks.completedTasks = completedTasks;
+    set #data({ repeatingTasks }) {
         if (repeatingTasks !== undefined) BackgroundTasks.repeatingTasks = repeatingTasks;
     }
 
@@ -68,9 +63,9 @@ class BackgroundTasks {
     }
 
     async #saveIfChanged(): Promise<void> {
-        if (JSON.stringify(this.oldData) !== JSON.stringify(this.#data))
+        if (this.oldDataString !== JSON.stringify(this.#data))
             await this.#save();
-        this.oldData = JSON.parse(JSON.stringify(this.#data));
+        this.oldDataString = JSON.stringify(this.#data);
     }
 
     async #load(): Promise<void> {
@@ -130,14 +125,27 @@ class BackgroundTasks {
 
     doRepeatingTasks = async () => {
         while (true) {
-            if (BackgroundTasks.repeatingTasks.length !== 0) {
-                const task = BackgroundTasks.repeatingTasks.shift()!;
-                BackgroundTasks.toDoTasks.push(task);
+            const now = Date.now();
+
+            BackgroundTasks.repeatingTasks =
+                BackgroundTasks.repeatingTasks.map(t => {
+                    if (!BackgroundTasks.taskNextRunAt.get(t.id)) BackgroundTasks.taskNextRunAt.set(t.id, now + (t.delay ?? 5) * 1000);
+                    return t;
+                });
+
+            for (const task of BackgroundTasks.repeatingTasks) {
+                const nextRunAt = BackgroundTasks.taskNextRunAt.get(task.id);
+                if (!nextRunAt || now >= nextRunAt) {
+                    BackgroundTasks.taskNextRunAt.set(task.id, now + (task.delay ?? 5) * 1000);
+                    if (!BackgroundTasks.toDoTasks.some((t) => t.id === task.id))
+                        BackgroundTasks.toDoTasks.push(task);
+                }
             }
 
             await sleep(1);
         }
     }
+
 
     async portMapHandler(task: Task): Promise<Task> {
         const schema = z.tuple([z.string(), z.number(), z.number()]);
@@ -163,12 +171,22 @@ class BackgroundTasks {
 
             // Keep port alive
             BackgroundTasks.portToTaskId.set(localPort, task.id);
-            BackgroundTasks.repeatingTasks.push({ ...task, delay: 300 })
+            if (!BackgroundTasks.repeatingTasks.some((t) => t.id === task.id))
+                BackgroundTasks.repeatingTasks.push({ ...task, delay: 5 })
             return task;
         }
         else {
             const foundTaskId = BackgroundTasks.portToTaskId.get(localPort);
-            BackgroundTasks.repeatingTasks.filter((t) => t.id !== foundTaskId);
+            try {
+                await op.disablePortForward(localPort);
+                task.status = 'success';
+            } catch (e) {
+                console.error(e);
+                task.result = JSON.stringify(e);
+                task.status = 'fail';
+            }
+            BackgroundTasks.repeatingTasks = BackgroundTasks.repeatingTasks.filter((t) => t.id !== foundTaskId);
+            BackgroundTasks.portToTaskId.delete(localPort);
         }
 
         return task;

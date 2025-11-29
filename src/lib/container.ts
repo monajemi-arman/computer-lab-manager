@@ -11,6 +11,8 @@ import { IUserRepository } from "@/repositories/user-repository";
 import { IFileRepository } from "@/repositories/file-repository";
 import { MongooseFileRepository } from "@/repositories/implementations/mongoose-file-repository";
 import { FileModel } from "@/models/file";
+import { PrismaPortMapRepository } from "@/repositories/implementations/prisma-portmap-repository";
+import { IPortMapRepository } from "@/repositories/portmap-repository";
 
 export class Container {
     private instances: Map<string, any> = new Map(); // eslint-disable-line
@@ -21,6 +23,7 @@ export class Container {
         this.register<IPlaybookRepository>("IPlaybookRepository", new PrismaPlaybookRepository());
         this.register<ITaskRepository>("ITaskRepository", new PrismaTaskRepository());
         this.register<IFileRepository>("IFileRepository", new MongooseFileRepository(FileModel));
+        this.register<IPortMapRepository>("IPortMapRepository", new PrismaPortMapRepository());
     }
 
     public register<T>(key: string, instance: T): void {

@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
@@ -28,4 +29,12 @@ model Playbook {
   filename String
   description String 
   tasks Task[]
+}
+
+model PortMap {
+  id Int @id @default(autoincrement())
+  hostname String
+  remotePort Int
+  localPort Int
+  owner String
 }

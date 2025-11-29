@@ -1,102 +1,126 @@
 "use client";
 
-import { useHash } from "@/hooks/use-hash";
-import styles from "./default-dashboard-view.module.css";
+import { Card, CardContent } from "@/components/ui/card";
+import { Monitor, CloudUpload, Terminal, Users, ServerCog } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default function DefaultDashboardView() {
-	const hash = useHash();
-	if (hash && hash.length != 0)
-		return null;
+export default function DashboardView() {
+  return (
+    <div className="p-6 space-y-10">
 
-	return (
-		<div className={styles.dlmRoot}>
-				<header className={styles.hero}>
-					<div className={styles.heroContent}>
-					<h1>Computer Lab Manager</h1>
-					<p className={styles.tagline}>
-						Orchestrate labs & clusters with confidence — sync users, deploy updates, and monitor health.
-					</p>
-					<div className={styles.badges}>
-						<span className={styles.badge}>🔐 Access</span>
-						<span className={styles.badge}>⚙️ Automation</span>
-						<span className={styles.badge}>📊 Monitoring</span>
-					</div>
-				</div>
-				<div className={styles.heroDecor} aria-hidden />
-			</header>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-600 to-gray-950 bg-clip-text text-transparent">
+          Welcome to Your Dashboard
+        </h1>
+        <p className="text-gray-500 mt-2 max-w-2xl">
+          A quick overview of what you can do. Choose a section from the sidebar to get started.
+        </p>
+      </motion.div>
 
-			<main className={styles.container}>
-				<section className={styles.introCard}>
-					<h2>Welcome 👋</h2>
-					<p>
-						Computer Lab Manager helps you manage university computer labs and clusters: centralized user
-						management, coordinated updates, remote access, and observability — all in one place.
-					</p>
+      {/* Feature Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-					<div className={styles.quickStart}>
-						<h3>Quick start</h3>
-						<div className={styles.steps}>
-							<div className={styles.step}>
-								<div className={styles.stepIndex}>1</div>
-								<div>
-									<strong>Set up computers</strong>
-									<p className={styles.muted}>Go to Access Management → Computers and register your machines.</p>
-								</div>
-							</div>
+        {/* Access Computers */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+        >
+          <Card className="flex flex-col h-full bg-gradient-to-br from-neutral-900/80 to-neutral-800/70 border border-neutral-700 rounded-2xl shadow-lg hover:shadow-xl transition">
+            <CardContent className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Monitor className="w-6 h-6 text-green-400" />
+                <h2 className="text-xl font-semibold text-green-300">Access Computers</h2>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Securely connect via SSH, set up tunnels, and manage remote lab machines with ease.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-							<div className={styles.step}>
-								<div className={styles.stepIndex}>2</div>
-								<div>
-									<strong>Add users</strong>
-									<p className={styles.muted}>Then add user accounts in Access Management → Users.</p>
-								</div>
-							</div>
+        {/* File Server */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.4 }}
+        >
+          <Card className="flex flex-col h-full bg-gradient-to-br from-neutral-900/80 to-neutral-800/70 border border-neutral-700 rounded-2xl shadow-lg hover:shadow-xl transition">
+            <CardContent className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <CloudUpload className="w-6 h-6 text-purple-300" />
+                <h2 className="text-xl font-semibold text-purple-200">File Server</h2>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Upload, download, and browse your files securely all in one place.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-							<div className={styles.step}>
-								<div className={styles.stepIndex}>3</div>
-								<div>
-									<strong>Proceed</strong>
-									<p className={styles.muted}>Afterwards configure sync, monitoring, and remote access.</p>
-								</div>
-							</div>
-						</div>
+        {/* Profile Settings */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
+          <Card className="flex flex-col h-full bg-gradient-to-br from-neutral-900/80 to-neutral-800/70 border border-neutral-700 rounded-2xl shadow-lg hover:shadow-xl transition">
+            <CardContent className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Terminal className="w-6 h-6 text-cyan-300" />
+                <h2 className="text-xl font-semibold text-cyan-200">Profile & Security</h2>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Update your credentials and keep your account secure.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-						<div className={styles.actions}>
-							{/* Primary admin actions */}
-							<button
-								className={`${styles.btn} ${styles.btnPrimary}`}
-								onClick={() => {
-									// Admin computers page from adminNavMain
-									window.location.hash = "#admin-computers";
-								}}
-								aria-label="Open Computers"
-							>
-								🖥️ Open Computers
-							</button>
+        {/* Admin: Access Management */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.4 }}
+        >
+          <Card className="flex flex-col h-full bg-gradient-to-br from-neutral-900/80 to-neutral-800/70 border border-neutral-700 rounded-2xl shadow-lg hover:shadow-xl transition">
+            <CardContent className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Users className="w-6 h-6 text-yellow-300" />
+                <h2 className="text-xl font-semibold text-yellow-200">Access Management</h2>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Manage users, permissions, and registered lab devices. (Admin Only)
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-							<button
-								className={`${styles.btn} ${styles.btnGhost}`}
-								onClick={() => {
-									// Admin users page from adminNavMain
-									window.location.hash = "#admin-users";
-								}}
-								aria-label="Manage Users"
-							>
-								👥 Manage Users
-							</button>
-						</div>
-					</div>
-				</section>
+        {/* Admin: System Administration */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+        >
+          <Card className="flex flex-col h-full bg-gradient-to-br from-neutral-900/80 to-neutral-800/70 border border-neutral-700 rounded-2xl shadow-lg hover:shadow-xl transition">
+            <CardContent className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <ServerCog className="w-6 h-6 text-red-300" />
+                <h2 className="text-xl font-semibold text-red-200">System Administration</h2>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Perform software updates, maintenance, and automate routine tasks. (Admin Only)
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-				<section className={styles.features}>
-					<h3><strong>&#10133;{' '} Core features</strong></h3>
-					<ul>
-						<li>&#9989;{' '} Centralized <strong>user management</strong> and synchronization</li>
-						<li>&#9989;{' '} Automated system updates and <strong>remote access tools</strong></li>
-						<li>&#9989;{' '} <strong>Monitoring</strong> system storage statistics</li>
-					</ul>
-				</section>
-			</main>
-		</div>
-	);
+      </div>
+    </div>
+  );
 }

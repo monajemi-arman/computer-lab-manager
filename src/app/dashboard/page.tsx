@@ -47,7 +47,7 @@ export default function Page() {
             />
           </div>
         </header>
-        <DefaultDashboardView />
+        {(hash == '' || hash =='#') && <DefaultDashboardView />}
         {
           // Admin Views
         }
